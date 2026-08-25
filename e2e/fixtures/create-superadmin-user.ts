@@ -1,0 +1,85 @@
+/**
+ * Standalone script: create a user with role "superadmin" in the test DB.
+ *
+ * Run via tsx (NOT imported by Playwright — the generated Prisma client
+ * uses `import.meta`, which the Playwright loader can't process):
+ *
+ *   npx tsx e2e/fixtures/create-superadmin-user.ts <username> <password> [role]
+ *
+ * `role` defaults to "superadmin"; pass "user" to mint a plain throwaway
+ * account (e.g. the suspend target in the suspend-gate spec) without
+ * burning a slot in the signup rate-limit bucket.
+ *
+ * Prints the created user as JSON on stdout:
+ *   {"id": 1, "username": "e2e-admin-..."}
+ *
+ * SAFETY: INSERTs a new row only. It does NOT delete or recreate the DB,
+ * so it is safe to run while the dev server is up.
+ */
+import "dotenv/config";
+
+import { PrismaLibSql } from "@prisma/adapter-libsql";
+import { PrismaClient } from "../../src/generated/prisma/client";
+import { hashPassword } from "../../src/lib/auth";
+import path from "node:path";
+
+function resolveDbUrl(): string {
+  const dbUrl = process.env.DATABASE_URL;
+  if (dbUrl?.startsWith("file:")) {
+    const rel = dbUrl.slice("file:".length);
+    const abs = path.isAbsolute(rel) ? rel : path.resolve(process.cwd(), rel);
+    return `file:${abs}`;
+  }
+  if (process.env.TURSO_DATABASE_URL) {
+    return process.env.TURSO_DATABASE_URL;
+  }
+  throw new Error(
+    "No database configured. Set DATABASE_URL=file:... or TURSO_DATABASE_URL.",
+  );
+}
+
+async function main() {
+  const [, , username, password, roleArg] = process.argv;
+  if (!username || !password) {
+    console.error(
+      "Usage: npx tsx create-superadmin-user.ts <username> <password> [role]",
+    );
+    process.exit(1);
+  }
+  const role = roleArg ?? "superadmin";
+
+  const url = resolveDbUrl();
+  const authToken = process.env.TURSO_AUTH_TOKEN;
+  const adapter = new PrismaLibSql({ url, authToken });
+  const prisma = new PrismaClient({ adapter });
+
+  try {
+    const existing = await prisma.user.findFirst({
+      where: { username },
+      select: { id: true, username: true },
+    });
+    if (existing) {
+      console.log(JSON.stringify(existing));
+      return;
+    }
+
+    const user = await prisma.user.create({
+      data: {
+        username,
+        email: `${username}@e2e-test.invalid`,
+        password: await hashPassword(password),
+        role,
+      },
+      select: { id: true, username: true },
+    });
+
+    console.log(JSON.stringify(user));
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

@@ -1,0 +1,1977 @@
+<!DOCTYPE html>
+<!--
+  propical — Sistema Visual · Brand Book v1.1
+  Conceito: "Pôr do sol dourado em Ubatuba"
+  Tipografia: DM Mono (display/labels) + DM Sans (corpo)
+-->
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="propical — Sistema Visual v1.1. Gerenciador de aluguel de temporada open source para o host independente brasileiro. Pôr do sol dourado: âmbar, coral, açaí e areia.">
+<title>propical — Sistema Visual · Brand Book v1.1</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300..1000;1,9..40,300..1000&display=swap" rel="stylesheet">
+
+<script>
+  /* Boot de tema — evita flash de cor errada. Lê localStorage, cai em prefers-color-scheme. */
+  (function(){try{var t=localStorage.getItem("bk-theme")||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");if(t==="dark"){document.documentElement.classList.add("dark")}document.documentElement.style.colorScheme=t}catch(e){}})();
+</script>
+
+<style>
+/* ══════════════════════════════════════════════
+   BRAND SYSTEM — propical v1.1
+   Tokens pt-BR · âmbar, mel, resina, noite, mata, mar, açaí
+   Família extensível: base + hover + soft + fg + text (ex.: --acai)
+   ══════════════════════════════════════════════ */
+:root {
+  --areia:      #FAF5EC;
+  --areia-2:    #F2EBDF;
+  --areia-3:    #E9E0D0;
+  --noite:      #241A10;
+  --noite-2:    #4A3A28;
+  --noite-3:    #6E5C46;
+  --noite-4:    #8F7C64;
+  --ambar:      #F2A93B;
+  --mel:        #C57A1F;
+  --mel-alt:    #C9A96E;
+  --resina:     #8C4C10;
+  --coral-deep: #BC3D1C;
+  --coral:      #FF6A47;
+  --mata:       #3D5C2A;
+  --mar:        #1E4A5C;
+  /* extensão — açaí (crepúsculo): CTA primário + família violeta.
+     Padrão de família extensível: base + hover + soft + fg + text. */
+  --acai:      #5B21B6;
+  --acai-2:    #4C1D95;
+  --acai-soft: rgba(91, 33, 182, 0.14);
+  --acai-fg:   #FFFFFF;
+  --acai-text: #4C1D95;
+  --acai-text-hover: #3B1578;
+  /* reverso — tile "noite na praia" (invierte con el tema) */
+  --reverso-tile: #241A10;
+  --reverso-ink:  #FAF5EC;
+  --line:       rgba(36, 26, 16, 0.10);
+  --line-2:     rgba(36, 26, 16, 0.18);
+  --pill-coral: rgba(255, 106, 71, 0.18);
+  --pill-ambar: rgba(242, 169, 59, 0.24);
+  --pill-mata:  rgba(61, 92, 42, 0.16);
+  --mono: 'DM Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans: 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --max-w: 1080px;
+  --section-pad-v: 3.5rem;
+  --section-pad-h: 1.25rem;
+}
+
+.dark {
+  --areia:      #171009;
+  --areia-2:    #1F1710;
+  --areia-3:    #281F16;
+  --noite:      #F4EDDF;
+  --noite-2:    #D6CBB9;
+  --noite-3:    #A8947C;
+  --noite-4:    #7E6C57;
+  --ambar:      #F0B257;
+  --mel:        #E8A75C;
+  --mel-alt:    #9C845F;
+  --resina:     #D99B52;
+  --coral-deep: #FF8A66;
+  --coral:      #FF6A47;
+  --mata:       #6F8F52;
+  --mar:        #5E8FA6;
+  /* extensão — açaí (crepúsculo) dark: violeta claro, tinta escura */
+  --acai:      #A78BFA;
+  --acai-2:    #C4B5FD;
+  --acai-soft: rgba(167, 139, 250, 0.16);
+  --acai-fg:   #241A10;
+  --acai-text: #C4B5FD;
+  --acai-text-hover: #A78BFA;
+  --reverso-tile: #FAF5EC;
+  --reverso-ink:  #241A10;
+  --line:       rgba(244, 237, 223, 0.09);
+  --line-2:     rgba(244, 237, 223, 0.16);
+  --pill-coral: rgba(255, 138, 102, 0.16);
+  --pill-ambar: rgba(240, 178, 87, 0.18);
+  --pill-mata:  rgba(111, 143, 82, 0.20);
+}
+
+/* ══════════════════════════════════════════════
+   RESET & BASE
+   ══════════════════════════════════════════════ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--sans);
+  background: var(--areia);
+  color: var(--noite);
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: -0.011em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+img, svg { display: block; }
+a { color: inherit; }
+::selection { background: var(--ambar); color: var(--noite); }
+
+/* ══════════════════════════════════════════════
+   NAV
+   ══════════════════════════════════════════════ */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  background: color-mix(in srgb, var(--areia) 88%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+.nav-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.nav-brand { display: flex; align-items: center; gap: 0.55rem; text-decoration: none; }
+.nav-brand svg { width: 26px; height: 26px; flex-shrink: 0; }
+.nav-wordmark { font-family: var(--mono); font-weight: 500; font-size: 0.95rem; letter-spacing: -0.02em; }
+.nav-links { display: none; }
+.nav-toggle {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  background: var(--areia-2);
+  color: var(--noite);
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  padding: 0.4rem 0.85rem;
+  cursor: pointer;
+  transition: background 0.25s, border-color 0.25s;
+  min-height: 40px;
+}
+.nav-toggle:hover { background: var(--areia-3); border-color: var(--mel-alt); }
+.nav-toggle .icon-moon { display: none; }
+.dark .nav-toggle .icon-sun  { display: none; }
+.dark .nav-toggle .icon-moon { display: inline; }
+
+@media (min-width: 900px) {
+  .nav-links {
+    display: flex;
+    gap: 1rem;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    font-weight: 400;
+    letter-spacing: 0.09em;
+    line-height: 1.5;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--noite-3);
+    transition: color 0.25s;
+  }
+  .nav-links a:hover { color: var(--resina); }
+}
+
+/* ══════════════════════════════════════════════
+   HERO
+   ══════════════════════════════════════════════ */
+.hero {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  padding: clamp(4.5rem, 12vw, 7rem) var(--section-pad-h) clamp(3.5rem, 8vw, 5.5rem);
+}
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, var(--line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+  background-size: 56px 48px;
+  mask-image: radial-gradient(ellipse 70% 60% at center 42%, black 35%, transparent 82%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at center 42%, black 35%, transparent 82%);
+}
+.hero-pills {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right,
+      transparent calc(2*56px + 28px), var(--pill-coral) 0,
+      var(--pill-coral) calc(5*56px + 28px), transparent 0),
+    linear-gradient(to right,
+      transparent calc(4*56px + 28px), var(--pill-ambar) 0,
+      var(--pill-ambar) calc(7*56px + 28px), transparent 0),
+    linear-gradient(to right,
+      transparent calc(1*56px + 28px), var(--pill-mata) 0,
+      var(--pill-mata) calc(3*56px + 28px), transparent 0);
+  background-repeat: no-repeat;
+  background-size: 100% 20px, 100% 20px, 100% 20px;
+  background-position:
+    0 calc(2*48px + 14px),
+    0 calc(3*48px + 14px),
+    0 calc(4*48px + 14px);
+  mask-image: radial-gradient(ellipse 72% 62% at center 46%, black 50%, transparent 96%);
+  -webkit-mask-image: radial-gradient(ellipse 72% 62% at center 46%, black 50%, transparent 96%);
+}
+.hero-inner { position: relative; max-width: var(--max-w); margin: 0 auto; }
+.hero-mark {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 1.75rem;
+  filter: drop-shadow(0 10px 28px rgba(36, 26, 16, 0.22));
+  animation: hero-in 700ms cubic-bezier(.2,.7,.2,1) both;
+}
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--resina);
+  margin-bottom: 1rem;
+  animation: hero-in 700ms 80ms cubic-bezier(.2,.7,.2,1) both;
+}
+.hero-title {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: clamp(2.6rem, 10vw, 4.6rem);
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+  margin-bottom: 1.25rem;
+  animation: hero-in 700ms 160ms cubic-bezier(.2,.7,.2,1) both;
+}
+.hero-tag {
+  font-family: var(--sans);
+  font-size: clamp(1rem, 3vw, 1.2rem);
+  font-weight: 400;
+  color: var(--noite-2);
+  max-width: 620px;
+  margin: 0 auto 1.5rem;
+  line-height: 1.6;
+  animation: hero-in 700ms 260ms cubic-bezier(.2,.7,.2,1) both;
+}
+.hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  animation: hero-in 700ms 360ms cubic-bezier(.2,.7,.2,1) both;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--noite-2);
+  background: var(--areia-2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.42rem 0.85rem;
+}
+
+@keyframes hero-in {
+  from { opacity: 0; transform: translateY(12px); filter: blur(6px); }
+  to   { opacity: 1; transform: translateY(0);  filter: blur(0); }
+}
+
+/* ══════════════════════════════════════════════
+   SEÇÕES GERAIS
+   ══════════════════════════════════════════════ */
+.section { padding: var(--section-pad-v) var(--section-pad-h); }
+.section-inner { max-width: var(--max-w); margin: 0 auto; }
+.section.alt { background: var(--areia-2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+
+.sec-eyebrow {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--resina);
+  margin-bottom: 0.75rem;
+}
+.sec-title {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: clamp(1.5rem, 4.5vw, 2.3rem);
+  letter-spacing: -0.02em;
+  line-height: 1.12;
+  margin-bottom: 0.875rem;
+}
+.sec-rule { width: 40px; height: 2px; background: var(--ambar); margin-bottom: 1.25rem; }
+.sec-body {
+  font-family: var(--sans);
+  font-size: 1.0625rem;
+  font-weight: 400;
+  color: var(--noite-2);
+  line-height: 1.7;
+  max-width: 62ch;
+}
+.sec-body strong { color: var(--noite); font-weight: 600; }
+.sec-body + .sec-body { margin-top: 0.9rem; }
+
+@media (min-width: 768px) { .section { padding: 5rem 2rem; } }
+@media (min-width: 1024px) { .section { padding: 6rem 2rem; } }
+
+/* ══════════════════════════════════════════════
+   01 · O PRODUTO
+   ══════════════════════════════════════════════ */
+.who-grid { display: grid; gap: 0.75rem; margin-top: 1.75rem; }
+.who-item {
+  display: flex;
+  gap: 0.9rem;
+  align-items: baseline;
+  padding: 1rem 1.1rem;
+  background: var(--areia);
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+}
+.who-n { font-family: var(--mono); font-size: 0.85rem; color: var(--resina); flex-shrink: 0; white-space: nowrap; }
+.who-body { font-size: 0.9375rem; color: var(--noite-2); line-height: 1.6; }
+.who-body strong { color: var(--noite); font-weight: 600; font-family: var(--mono); font-size: 0.9rem; letter-spacing: -0.01em; }
+
+/* 04 · VOZ E TOM */
+.voz-grid { display: grid; gap: 1rem; grid-template-columns: 1fr; margin-top: 2rem; }
+@media (min-width: 700px) { .voz-grid { grid-template-columns: 1fr 1fr; } }
+.voz-card {
+  border: 1px solid var(--line);
+  border-radius: 0.85rem;
+  background: var(--areia);
+  padding: 1.25rem;
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+.voz-card:hover { border-color: var(--line-2); transform: translateY(-2px); }
+.voz-tag { font-family: var(--mono); font-size: 0.85rem; color: var(--resina); letter-spacing: 0.12em; text-transform: uppercase; }
+.voz-title { font-family: var(--mono); font-size: 0.95rem; font-weight: 500; color: var(--noite); margin-top: 0.6rem; letter-spacing: -0.01em; }
+.voz-body { margin-top: 0.6rem; font-size: 0.85rem; color: var(--noite-2); line-height: 1.6; }
+.voz-example {
+  margin-top: 0.85rem;
+  padding: 0.75rem 0.9rem;
+  border-left: 2px solid var(--ambar);
+  background: var(--areia-2);
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  color: var(--noite-2);
+  line-height: 1.55;
+}
+
+/* ══════════════════════════════════════════════
+   02 · INSPIRAÇÃO
+   ══════════════════════════════════════════════ */
+.insp-grid { display: grid; gap: 1rem; grid-template-columns: 1fr; margin-top: 2rem; }
+@media (min-width: 640px) { .insp-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 960px) { .insp-grid { grid-template-columns: repeat(4, 1fr); } }
+.insp-card {
+  border: 1px solid var(--line);
+  border-radius: 0.85rem;
+  overflow: hidden;
+  background: var(--areia);
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+.insp-card:hover { transform: translateY(-3px); border-color: var(--line-2); }
+.insp-swatch { height: 88px; }
+.insp-s-1 { background: linear-gradient(160deg, var(--ambar), var(--coral)); }
+.insp-s-2 { background: linear-gradient(160deg, #2E4A26, var(--mata), #1E3015); }
+.insp-s-3 { background: linear-gradient(160deg, #12384A, var(--mar), #0A2230); }
+.insp-s-4 { background: var(--areia-3); }
+.insp-info { padding: 0.9rem 1rem; }
+.insp-name { font-family: var(--mono); font-size: 0.85rem; font-weight: 500; color: var(--noite); }
+.insp-desc { margin-top: 0.25rem; font-size: 0.85rem; color: var(--noite-3); line-height: 1.5; }
+
+/* ══════════════════════════════════════════════
+   03 · RECURSOS
+   ══════════════════════════════════════════════ */
+.feat-grid { display: grid; gap: 1rem; grid-template-columns: 1fr; margin-top: 2rem; }
+@media (min-width: 640px) { .feat-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 960px) { .feat-grid { grid-template-columns: repeat(3, 1fr); } }
+.feat-card {
+  border: 1px solid var(--line);
+  border-radius: 0.85rem;
+  background: var(--areia);
+  padding: 1.25rem;
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+.feat-card:hover { border-color: var(--line-2); transform: translateY(-2px); }
+.feat-n { font-family: var(--mono); font-size: 0.85rem; color: var(--resina); letter-spacing: 0.14em; }
+.feat-name {
+  font-family: var(--mono);
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--noite);
+  margin-top: 0.6rem;
+  letter-spacing: -0.01em;
+}
+.feat-desc { margin-top: 0.5rem; font-size: 0.85rem; color: var(--noite-2); line-height: 1.6; }
+
+/* ══════════════════════════════════════════════
+   06 · WORDMARK & LOGO
+   ══════════════════════════════════════════════ */
+.logo-grid { display: grid; gap: 1rem; grid-template-columns: 1fr; margin-top: 2rem; }
+@media (min-width: 700px) { .logo-grid { grid-template-columns: repeat(3, 1fr); } }
+.logo-variant { border: 1px solid var(--line); border-radius: 0.85rem; overflow: hidden; background: var(--areia); }
+.logo-stage {
+  aspect-ratio: 4/3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: radial-gradient(circle at 30% 20%, var(--areia-2), var(--areia) 60%);
+  border-bottom: 1px solid var(--line);
+}
+.logo-stage svg { width: 128px; height: 128px; }
+.logo-meta { padding: 0.85rem 1rem; }
+.logo-tag { font-family: var(--mono); font-size: 0.85rem; color: var(--resina); letter-spacing: 0.12em; }
+.logo-name { margin-top: 0.25rem; font-size: 0.875rem; font-weight: 600; color: var(--noite); }
+.logo-desc { margin-top: 0.2rem; font-size: 0.85rem; color: var(--noite-3); line-height: 1.5; }
+
+.logo-rules { display: grid; gap: 0.75rem; margin-top: 2rem; }
+@media (min-width: 640px) { .logo-rules { grid-template-columns: repeat(2, 1fr); } }
+.logo-rule {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 0.95rem 1.05rem;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--areia);
+}
+.logo-rule.dont { border-color: rgba(188, 61, 28, 0.35); }
+.logo-rule-icon {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  border-radius: 0.4rem;
+  padding: 0.15rem 0.45rem;
+  flex-shrink: 0;
+}
+.logo-rule.do .logo-rule-icon   { background: var(--mata); color: #fff; }
+.logo-rule.dont .logo-rule-icon { background: var(--coral); color: var(--noite); }
+.logo-rule-title { font-family: var(--mono); font-size: 0.85rem; font-weight: 500; color: var(--noite); }
+.logo-rule-body { margin-top: 0.25rem; font-size: 0.85rem; color: var(--noite-3); line-height: 1.55; }
+
+/* c · reverso — tile "noite na praia" invierte con el tema: en claro el
+   cuadrado es noite (contenido areia), en oscuro el cuadrado es areia
+   (contenido noite). Colores vía --reverso-tile / --reverso-ink. */
+
+/* ══════════════════════════════════════════════
+   05 · CORES
+   ══════════════════════════════════════════════ */
+.color-group-title {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--noite-3);
+  margin: 2.25rem 0 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+.color-group-title:first-of-type { margin-top: 2rem; border-top: none; padding-top: 0; }
+.swatch-grid { display: grid; gap: 0.85rem; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+.swatch { border: 1px solid var(--line); border-radius: 0.75rem; overflow: hidden; background: var(--areia); }
+.swatch-block { height: 72px; border-bottom: 1px solid var(--line); }
+.swatch-info { padding: 0.7rem 0.8rem; }
+.swatch-name { font-family: var(--mono); font-size: 0.85rem; font-weight: 500; color: var(--noite); }
+.swatch-hex { font-family: var(--mono); font-size: 0.85rem; color: var(--noite-3); margin-top: 0.15rem; }
+.swatch-role { font-size: 0.85rem; color: var(--noite-3); margin-top: 0.35rem; line-height: 1.45; }
+.swatch-aa {
+  display: inline-block;
+  margin-top: 0.45rem;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  color: var(--mata);
+  border: 1px solid color-mix(in srgb, var(--mata) 40%, transparent);
+  border-radius: 999px;
+  padding: 0.14rem 0.5rem;
+}
+
+.roles-table { margin-top: 2rem; border: 1px solid var(--line); border-radius: 0.75rem; overflow: hidden; }
+.role-row {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 1rem;
+  padding: 0.85rem 1.05rem;
+  border-bottom: 1px solid var(--line);
+  align-items: baseline;
+  background: var(--areia);
+}
+.role-row:last-child { border-bottom: none; }
+.role-name { font-family: var(--mono); font-size: 0.85rem; font-weight: 500; color: var(--noite); }
+.role-desc { font-size: 0.85rem; color: var(--noite-2); line-height: 1.55; }
+@media (min-width: 640px) { .role-row { grid-template-columns: 160px 1fr; } }
+
+/* ══════════════════════════════════════════════
+   06 · TIPOGRAFIA
+   ══════════════════════════════════════════════ */
+.font-cards { display: grid; gap: 1rem; grid-template-columns: 1fr; margin-top: 2rem; }
+@media (min-width: 700px) { .font-cards { grid-template-columns: 1fr 1fr; } }
+.font-card { border: 1px solid var(--line); border-radius: 0.85rem; overflow: hidden; background: var(--areia); }
+.font-head { padding: 1.1rem 1.25rem; border-bottom: 1px solid var(--line); }
+.font-name { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; }
+.font-card.mono .font-name { font-family: var(--mono); font-weight: 500; }
+.font-card.sans .font-name  { font-family: var(--sans); }
+.font-sub { margin-top: 0.3rem; font-family: var(--mono); font-size: 0.85rem; color: var(--noite-3); letter-spacing: 0.08em; }
+.font-weights { padding: 1.1rem 1.25rem; display: flex; flex-direction: column; gap: 0.85rem; }
+.font-w { display: flex; align-items: baseline; gap: 0.75rem; }
+.font-w-label { font-family: var(--mono); font-size: 0.85rem; color: var(--noite-3); width: 88px; flex-shrink: 0; }
+.font-w-sample { font-size: 1.4rem; }
+.font-card.mono .font-w-sample { font-family: var(--mono); }
+.font-card.sans .font-w-sample { font-family: var(--sans); }
+.font-uses { padding: 0 1.25rem 1.25rem; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.font-use {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--noite-3);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.28rem 0.65rem;
+}
+
+.type-scale { margin-top: 2.25rem; border: 1px solid var(--line); border-radius: 0.85rem; overflow: hidden; background: var(--areia); }
+.ts-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1.15rem 1.25rem;
+  border-bottom: 1px solid var(--line);
+}
+.ts-row:last-child { border-bottom: none; }
+.ts-label { font-family: var(--mono); font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--noite-3); }
+.ts-meta { font-family: var(--mono); font-size: 0.85rem; color: var(--noite-3); }
+.ts-display  { font-family: var(--mono); font-weight: 500; font-size: clamp(2.2rem, 7vw, 3.6rem); letter-spacing: -0.02em; line-height: 1.02; color: var(--noite); }
+.ts-h2       { font-family: var(--mono); font-weight: 500; font-size: clamp(1.4rem, 4vw, 2rem); letter-spacing: -0.02em; line-height: 1.15; color: var(--noite); }
+.ts-eyebrow  { font-family: var(--mono); font-weight: 400; font-size: 0.85rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--resina); }
+.ts-body     { font-family: var(--sans); font-weight: 400; font-size: 1.0625rem; line-height: 1.65; color: var(--noite-2); max-width: 55ch; }
+.ts-caption  { font-family: var(--sans); font-weight: 400; font-size: 0.875rem; color: var(--noite-3); }
+.ts-data     { font-family: var(--mono); font-weight: 400; font-size: 0.85rem; color: var(--noite); }
+
+.type-rules { margin-top: 2rem; display: grid; gap: 0.75rem; }
+@media (min-width: 640px) { .type-rules { grid-template-columns: repeat(2, 1fr); } }
+.type-rule {
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+  padding: 0.95rem 1.05rem;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--areia);
+}
+.type-rule .tick { font-family: var(--mono); color: var(--mata); font-weight: 500; flex-shrink: 0; }
+.type-rule-body { font-size: 0.85rem; color: var(--noite-2); line-height: 1.55; }
+.type-rule-body code {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--resina);
+  background: var(--areia-2);
+  border-radius: 0.3rem;
+  padding: 0.08rem 0.35rem;
+}
+
+/* ══════════════════════════════════════════════
+   07 · COMPONENTES
+   ══════════════════════════════════════════════ */
+.comp-grid { display: grid; gap: 1rem; grid-template-columns: 1fr; margin-top: 2rem; }
+@media (min-width: 700px) { .comp-grid { grid-template-columns: 1fr 1fr; } }
+.comp-card { border: 1px solid var(--line); border-radius: 0.85rem; background: var(--areia); overflow: hidden; }
+.comp-head {
+  padding: 0.9rem 1.15rem;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.comp-name { font-family: var(--mono); font-size: 0.85rem; font-weight: 500; color: var(--noite); }
+.comp-token { font-family: var(--mono); font-size: 0.85rem; color: var(--noite-3); }
+.comp-stage { padding: 1.6rem 1.15rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.9rem; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  padding: 0.7rem 1.4rem;
+  min-height: 44px;
+  text-decoration: none;
+  transition: background 0.25s, border-color 0.25s, transform 0.15s ease, box-shadow 0.25s;
+  cursor: pointer;
+}
+.btn-primary {
+  background: var(--acai);
+  color: var(--acai-fg);
+  border: 1px solid transparent;
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--acai) 35%, transparent);
+}
+.btn-primary:hover { background: var(--acai-2); color: var(--acai-fg); transform: translateY(-1px); }
+.btn-secondary {
+  background: var(--areia);
+  color: var(--noite);
+  border: 1px solid var(--line-2);
+}
+.btn-secondary:hover { background: var(--areia-3); border-color: var(--mel-alt); }
+
+.squiggle-link {
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--coral-deep);
+  text-decoration: none;
+  position: relative;
+  padding-bottom: 4px;
+}
+.squiggle-link svg { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 8px; }
+.squiggle-link path { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+
+.eyebrow-demo { font-family: var(--mono); font-size: 0.85rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--resina); }
+
+.pill-demo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--noite);
+  background: var(--areia);
+}
+
+.mini-cal {
+  width: 100%;
+  max-width: 380px;
+  border: 1px solid var(--line);
+  border-radius: 0.85rem;
+  overflow: hidden;
+  background: var(--areia);
+}
+.mini-cal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0.9rem;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--noite-2);
+}
+.mini-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--line); padding: 1px; }
+.mini-cal-cell {
+  aspect-ratio: 1.15/1;
+  background: var(--areia);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--noite-3);
+}
+.mini-cal-cell.dim { opacity: 0.5; }
+.mini-cal-cell.booked { background: var(--pill-coral); color: var(--coral-deep); }
+.mini-cal-cell.buffer { background: var(--pill-ambar); color: var(--resina); }
+.mini-cal-cell.free { color: var(--mata); }
+
+/* ══════════════════════════════════════════════
+   APP ATOMS — extraídos de la app (Corrida C2a/C2b)
+   Chip · Badge · PlatformDot · Card — mismos tokens que la app
+   ══════════════════════════════════════════════ */
+.chip-demo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 999px;
+  padding: 0.3rem 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+.chip-demo.neutral { background: var(--areia-3); color: var(--noite-3); }
+.chip-demo.action  { border: 1px solid color-mix(in srgb, var(--acai) 30%, transparent); background: var(--acai-soft); color: var(--acai-text); }
+.chip-demo.success { background: var(--pill-mata); color: var(--mata); }
+.chip-demo.error   { background: var(--pill-coral); color: var(--coral-deep); }
+.chip-demo.warning { background: var(--pill-ambar); color: var(--resina); }
+.chip-demo.info    { background: rgba(30, 74, 92, 0.15); color: var(--mar); }
+
+.badge-demo {
+  display: inline-flex;
+  align-items: center;
+  height: 1.25rem;
+  border-radius: 999px;
+  padding: 0 0.5rem;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.badge-demo.default   { background: var(--acai); color: var(--acai-fg); }
+.badge-demo.secondary { background: var(--areia-3); color: var(--noite); }
+.badge-demo.outline   { border: 1px solid var(--line-2); color: var(--noite); }
+
+.platform-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.app-card {
+  width: 100%;
+  max-width: 340px;
+  border: 1px solid var(--line);
+  border-radius: 0.85rem;
+  background: var(--areia);
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  text-align: left;
+}
+.app-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
+.app-card-eyebrow { font-family: var(--mono); font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--resina); }
+.app-card-title { font-family: var(--mono); font-size: 0.95rem; font-weight: 500; color: var(--noite); margin-top: 0.2rem; }
+.app-card-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--noite-2);
+  border-top: 1px solid var(--line);
+  padding-top: 0.55rem;
+}
+.app-card-row .val { font-family: var(--mono); color: var(--noite); display: inline-flex; align-items: center; gap: 0.35rem; }
+.app-card-cta { margin-top: 0.25rem; }
+
+/* Molecules — extraídas de la app (Corrida C2b)
+   PageHeader · PropertySwitcher — mismos tokens que la app */
+.page-header-demo {
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.page-header-demo .ph-title {
+  font-family: var(--mono);
+  font-size: 1.5rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--noite);
+  line-height: 1.15;
+}
+.page-header-demo .ph-sub {
+  margin-top: 0.3rem;
+  font-size: 0.875rem;
+  color: var(--noite-3);
+}
+.page-header-demo .ph-actions { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
+
+.prop-switcher-demo { width: 100%; max-width: 460px; display: flex; flex-direction: column; gap: 0.5rem; }
+.prop-switcher-demo .ps-eyebrow {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--resina);
+}
+.prop-switcher-demo .ps-pills { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.prop-switcher-demo .ps-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 0.4rem;
+  padding: 0.3rem 0.65rem;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+}
+.prop-switcher-demo .ps-pill.active { background: var(--acai); color: var(--acai-fg); }
+.prop-switcher-demo .ps-pill.idle { background: var(--areia-2); color: var(--noite-2); }
+
+/* ══════════════════════════════════════════════
+   08 · ALTOPROP
+   ══════════════════════════════════════════════ */
+.alto-grid { display: grid; gap: 1.25rem; grid-template-columns: 1fr; margin-top: 2rem; align-items: center; }
+@media (min-width: 900px) { .alto-grid { grid-template-columns: 1fr 1fr; } }
+.alto-stage {
+  border: 1px solid var(--line);
+  border-radius: 0.85rem;
+  background: #1A1410;
+  color: #EFE6D6;
+  padding: 1.6rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.alto-stage .alt-name { font-family: var(--mono); font-size: 1.35rem; font-weight: 500; letter-spacing: -0.02em; }
+.alto-stage .alt-line { height: 2px; width: 40px; background: var(--ambar); }
+.alto-stage .alt-desc { font-family: var(--sans); font-size: 0.9rem; color: #B9AC99; line-height: 1.6; }
+.alto-stage .alt-chip {
+  align-self: flex-start;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #EFE6D6;
+  border: 1px solid rgba(239, 230, 214, 0.25);
+  border-radius: 999px;
+  padding: 0.3rem 0.7rem;
+}
+
+/* ══════════════════════════════════════════════
+   FOOTER
+   ══════════════════════════════════════════════ */
+.footer { border-top: 1px solid var(--line); padding: 2.5rem var(--section-pad-h) 2rem; background: var(--areia-2); }
+.footer-inner { max-width: var(--max-w); margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; }
+@media (min-width: 640px) { .footer-inner { flex-direction: row; align-items: center; justify-content: space-between; } }
+.footer-brand { display: flex; align-items: center; gap: 0.6rem; }
+.footer-brand svg { width: 26px; height: 26px; }
+.footer-wordmark { font-family: var(--mono); font-weight: 500; font-size: 0.9rem; }
+.footer-meta { font-size: 0.85rem; color: var(--noite-3); }
+.footer-meta span { font-family: var(--mono); }
+
+/* Reveal on scroll */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.visible { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .hero-mark, .hero-eyebrow, .hero-title, .hero-tag, .hero-meta { animation: none; opacity: 1; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     NAV
+     ══════════════════════════════════════════════ -->
+<header class="nav">
+  <div class="nav-inner">
+    <a href="#top" class="nav-brand" aria-label="propical — volta ao topo">
+      <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="nv" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#F2A93B"/>
+            <stop offset="100%" stop-color="#FF6A47"/>
+          </linearGradient>
+        </defs>
+        <rect width="120" height="120" rx="26" fill="url(#nv)"/>
+        <circle cx="74" cy="40" r="26" fill="#FAF5EC"/>
+        <path d="M48 36 L24 64 L24 88 L72 88 L72 64 Z" fill="#241A10"/>
+      </svg>
+      <span class="nav-wordmark">propical</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#produto">produto</a></li>
+      <li><a href="#inspiracao">inspiração</a></li>
+      <li><a href="#recursos">recursos</a></li>
+      <li><a href="#logo">logo</a></li>
+      <li><a href="#cores">cores</a></li>
+      <li><a href="#tipografia">tipografia</a></li>
+    </ul>
+    <button class="nav-toggle" id="theme-toggle" type="button" aria-label="Alternar tema claro/escuro">
+      <span class="icon-sun">☼ claro</span>
+      <span class="icon-moon">☾ escuro</span>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ══════════════════════════════════════════════
+     HERO
+     ══════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-grid" aria-hidden="true"></div>
+  <div class="hero-pills" aria-hidden="true"></div>
+  <div class="hero-inner">
+    <div class="hero-mark" aria-hidden="true">
+      <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="hg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#F2A93B"/>
+            <stop offset="100%" stop-color="#FF6A47"/>
+          </linearGradient>
+        </defs>
+        <rect width="120" height="120" rx="26" fill="url(#hg)"/>
+        <circle cx="74" cy="40" r="26" fill="#FAF5EC"/>
+        <path d="M48 36 L24 64 L24 88 L72 88 L72 64 Z" fill="#241A10"/>
+      </svg>
+    </div>
+    <p class="hero-eyebrow">sistema visual · brand book v1.1</p>
+    <h1 class="hero-title">propical</h1>
+    <p class="hero-tag">O calendário da sua casa de temporada.</p>
+    <div class="hero-meta">
+      <span class="chip">open source</span>
+      <span class="chip">1–5 propriedades</span>
+      <span class="chip">pt-BR</span>
+      <span class="chip">light + dark</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     01 · O PRODUTO
+     ══════════════════════════════════════════════ -->
+<section class="section" id="produto">
+  <div class="section-inner">
+    <p class="sec-eyebrow reveal">01 · o produto</p>
+    <h2 class="sec-title reveal">Gerenciador de aluguel de temporada para quem está crescendo.</h2>
+    <div class="sec-rule reveal"></div>
+    <p class="sec-body reveal">
+      propical é um gerenciador de aluguel de temporada <strong>gratuito e open source</strong>, feito para o
+      host independente brasileiro — dono(a) de poucas casas ou apartamentos que hoje organiza tudo entre
+      Trello, WhatsApp e abas do navegador.
+    </p>
+    <p class="sec-body reveal">
+      É gratuito de verdade: sem plano pago, sem upsell, sem rastreamento — feito para o host crescer sem
+      depender de um channel manager caro.
+    </p>
+
+    <div class="who-grid">
+      <div class="who-item reveal">
+        <span class="who-n">indie</span>
+        <span class="who-body"><strong>dono de poucas propriedades</strong> — sem equipe, sem PMS, sem planilha.</span>
+      </div>
+      <div class="who-item reveal">
+        <span class="who-n">trello</span>
+        <span class="who-body"><strong>organizado em ferramentas simples</strong> — acostumado a UI direta, quer resolver e sair.</span>
+      </div>
+      <div class="who-item reveal">
+        <span class="who-n">remoto</span>
+        <span class="who-body"><strong>trabalho remoto</strong> — de Ubatuba, do interior ou de qualquer lugar com wi-fi. A varanda é o escritório.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     02 · INSPIRAÇÃO
+     ══════════════════════════════════════════════ -->
+<section class="section alt" id="inspiracao">
+  <div class="section-inner">
+    <p class="sec-eyebrow reveal">02 · inspiração</p>
+    <h2 class="sec-title reveal">Pôr do sol dourado em Ubatuba.</h2>
+    <div class="sec-rule reveal"></div>
+    <p class="sec-body reveal">
+      A marca nasce de uma casa na praia: o sol descendo sobre a Mata Atlântica, a areia ainda quente,
+      a cachoeira a poucos minutos. Não é decoração tropical — <strong>sem palmeiras na interface</strong>.
+      A natureza entra pela temperatura da cor, pela organicidade do logo e pela sensação de que dá pra
+      tocar o negócio da varanda da própria casa.
+    </p>
+
+    <div class="insp-grid">
+      <div class="insp-card reveal">
+        <div class="insp-swatch insp-s-1"></div>
+        <div class="insp-info">
+          <p class="insp-name">praia</p>
+          <p class="insp-desc">Pôr do sol dourado: âmbar e coral descendo até a areia.</p>
+        </div>
+      </div>
+      <div class="insp-card reveal">
+        <div class="insp-swatch insp-s-2"></div>
+        <div class="insp-info">
+          <p class="insp-name">mata atlântica</p>
+          <p class="insp-desc">Verde mata como apoio — presença, não protagonismo.</p>
+        </div>
+      </div>
+      <div class="insp-card reveal">
+        <div class="insp-swatch insp-s-3"></div>
+        <div class="insp-info">
+          <p class="insp-name">mar</p>
+          <p class="insp-desc">Água escura do fim de tarde, para contrastes e estados.</p>
+        </div>
+      </div>
+      <div class="insp-card reveal">
+        <div class="insp-swatch insp-s-4"></div>
+        <div class="insp-info">
+          <p class="insp-name">home office</p>
+          <p class="insp-desc">Trabalho remoto na varanda: superfícies claras e quentes.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     03 · RECURSOS
+     ══════════════════════════════════════════════ -->
+<section class="section" id="recursos">
+  <div class="section-inner">
+    <p class="sec-eyebrow reveal">03 · recursos</p>
+    <h2 class="sec-title reveal">Feito para o que dói.</h2>
+    <div class="sec-rule reveal"></div>
+    <p class="sec-body reveal">O produto resolve as dores reais do host pequeno — sem recursos que nunca vão ser usados.</p>
+
+    <div class="feat-grid">
+      <div class="feat-card reveal">
+        <p class="feat-n">01</p>
+        <h3 class="feat-name">Sincronização iCal entre plataformas</h3>
+        <p class="feat-desc">Airbnb, Booking, Vrbo e qualquer fonte iCal. Cada plataforma enxerga a reserva da outra em ~10 minutos — o fim das reservas duplicadas.</p>
+      </div>
+      <div class="feat-card reveal">
+        <p class="feat-n">02</p>
+        <h3 class="feat-name">Automação de limpeza</h3>
+        <p class="feat-desc">Dias buffer que as plataformas não fazem nativamente, lista de limpeza do dia e papel de diarista com acesso restrito.</p>
+      </div>
+      <div class="feat-card reveal">
+        <p class="feat-n">03</p>
+        <h3 class="feat-name">Multi-propriedade</h3>
+        <p class="feat-desc">Várias casas em um painel, troca por atalho de teclado, funções para co-hosts e diaristas com permissões justas.</p>
+      </div>
+      <div class="feat-card reveal">
+        <p class="feat-n">04</p>
+        <h3 class="feat-name">Modelos de mensagem</h3>
+        <p class="feat-desc">Por propriedade, com variáveis (nome do hóspede, check-in, wi-fi). Ctrl+C e cola direto no Airbnb ou WhatsApp.</p>
+      </div>
+      <div class="feat-card reveal">
+        <p class="feat-n">05</p>
+        <h3 class="feat-name">Feed iCal público</h3>
+        <p class="feat-desc">Cada propriedade tem a própria URL. Cole de volta nas plataformas e elas puxam seus bloqueios manuais.</p>
+      </div>
+      <div class="feat-card reveal">
+        <p class="feat-n">06</p>
+        <h3 class="feat-name">Extração de passaporte com IA</h3>
+        <p class="feat-desc">Foto do passaporte vira ficha de hóspede preenchida — identidade e visto na hora, sem digitar.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     04 · VOZ E TOM
+     ══════════════════════════════════════════════ -->
+<section class="section" id="voz">
+  <div class="section-inner">
+    <p class="sec-eyebrow reveal">04 · voz e tom</p>
+    <h2 class="sec-title reveal">Como a propical fala.</h2>
+    <div class="sec-rule reveal"></div>
+    <p class="sec-body reveal">
+      A marca tem dois registros — e os dois convivem sem se atropelar.
+    </p>
+
+    <div class="voz-grid">
+      <div class="voz-card reveal">
+        <p class="voz-tag">registro de marca</p>
+        <h3 class="voz-title">Cálido, do litoral</h3>
+        <p class="voz-body">Frases curtas, imagens da praia e da mata, gente real. A marca fala como um vizinho que conhece a casa.</p>
+        <p class="voz-example">&ldquo;A areia ainda quente, a casa pronta, o hóspede chegando.&rdquo;</p>
+      </div>
+      <div class="voz-card reveal">
+        <p class="voz-tag">registro de produto</p>
+        <h3 class="voz-title">Direto, sem jargão</h3>
+        <p class="voz-body">Resolve a dor em uma frase, com número concreto quando ajuda. Sem promessas vazias.</p>
+        <p class="voz-example">&ldquo;Cada plataforma enxerga a reserva da outra em ~10 minutos.&rdquo;</p>
+      </div>
+    </div>
+
+    <div class="type-rules">
+      <div class="type-rule reveal">
+        <span class="tick">✓</span>
+        <span class="type-rule-body">Sempre <code>pt-BR</code>. &ldquo;Host&rdquo; sim, &ldquo;stakeholder&rdquo; não.</span>
+      </div>
+      <div class="type-rule reveal">
+        <span class="tick">✓</span>
+        <span class="type-rule-body">Números concretos. Sem superlativos vazios (&ldquo;o melhor&rdquo;, &ldquo;revolucionário&rdquo;).</span>
+      </div>
+      <div class="type-rule reveal">
+        <span class="tick">✓</span>
+        <span class="type-rule-body">CTA em imperativo suave: &ldquo;Começar&rdquo;, &ldquo;Testar&rdquo;, &ldquo;Ver o código&rdquo;.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     05 · PRINCÍPIOS
+     ══════════════════════════════════════════════ -->
+<section class="section alt" id="principios">
+  <div class="section-inner">
+    <p class="sec-eyebrow reveal">05 · princípios</p>
+    <h2 class="sec-title reveal">Princípios.</h2>
+    <div class="sec-rule reveal"></div>
+    <p class="sec-body reveal">Quatro valores guiam decisões de produto e de comunicação.</p>
+
+    <div class="feat-grid">
+      <div class="feat-card reveal">
+        <p class="feat-n">01</p>
+        <h3 class="feat-name">Simplicidade</h3>
+        <p class="feat-desc">Uma tela resolve o problema do dia. Se precisa de manual, está errado.</p>
+      </div>
+      <div class="feat-card reveal">
+        <p class="feat-n">02</p>
+        <h3 class="feat-name">Confiança</h3>
+        <p class="feat-desc">Open source, sem rastreamento, dados são seus. A casa abre a porta pra você ver tudo.</p>
+      </div>
+      <div class="feat-card reveal">
+        <p class="feat-n">03</p>
+        <h3 class="feat-name">Calor</h3>
+        <p class="feat-desc">O host é gente, não conta. Tratado como vizinho, não como número de suporte.</p>
+      </div>
+      <div class="feat-card reveal">
+        <p class="feat-n">04</p>
+        <h3 class="feat-name">Crescer</h3>
+        <p class="feat-desc">O sistema acompanha o host de uma casa a várias, sem trocar de ferramenta nem de linguagem.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     06 · WORDMARK & LOGO
+     ══════════════════════════════════════════════ -->
+<section class="section alt" id="logo">
+  <div class="section-inner">
+    <p class="sec-eyebrow reveal">06 · wordmark &amp; logo</p>
+    <h2 class="sec-title reveal">Casa e sol — dia novo, check-in novo.</h2>
+    <div class="sec-rule reveal"></div>
+    <p class="sec-body reveal">
+      O mark é minimalista: uma casa atravessada por um sol que nasce por trás do telhado. Remete à casa de
+      temporada e ao novo dia que começa a cada check-in. O wordmark é sempre <strong>minúsculo</strong>,
+      em DM Mono 500 — nunca all-caps.
+    </p>
+
+    <div class="logo-grid">
+      <div class="logo-variant reveal">
+        <div class="logo-stage">
+          <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="lv-a" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#F2A93B"/>
+                <stop offset="100%" stop-color="#FF6A47"/>
+              </linearGradient>
+            </defs>
+            <rect width="120" height="120" rx="26" fill="url(#lv-a)"/>
+            <circle cx="74" cy="40" r="26" fill="#FAF5EC"/>
+            <path d="M48 36 L24 64 L24 88 L72 88 L72 64 Z" fill="#241A10"/>
+          </svg>
+        </div>
+        <div class="logo-meta">
+          <p class="logo-tag">a · uso principal</p>
+          <p class="logo-name">Tile gradiente</p>
+          <p class="logo-desc">Pôr do sol dourado com casa + sol. Para header, favicon e superfícies de marca.</p>
+        </div>
+      </div>
+
+      <div class="logo-variant reveal">
+        <div class="logo-stage">
+          <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="74" cy="40" r="26" fill="currentColor"/>
+            <path d="M48 36 L24 64 L24 88 L72 88 L72 64 Z" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="logo-meta">
+          <p class="logo-tag">b · monocromático</p>
+          <p class="logo-name">Tinta única</p>
+          <p class="logo-desc">Sol cheio + casa cheia, numa cor só. Funciona sobre fundo claro ou escuro.</p>
+        </div>
+      </div>
+
+      <div class="logo-variant reveal">
+        <div class="logo-stage">
+          <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="120" height="120" rx="26" fill="var(--reverso-tile)"/>
+            <circle cx="74" cy="40" r="26" fill="var(--reverso-ink)"/>
+            <path d="M48 36 L24 64 L24 88 L72 88 L72 64 Z" fill="var(--reverso-ink)"/>
+          </svg>
+        </div>
+        <div class="logo-meta">
+          <p class="logo-tag">c · reverso</p>
+          <p class="logo-name">Noite na praia</p>
+          <p class="logo-desc alt-reverso">Casa e sol em areia sobre tile noite. Para o modo escuro e superfícies premium.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="logo-rules">
+      <div class="logo-rule do reveal">
+        <span class="logo-rule-icon">DO</span>
+        <div>
+          <p class="logo-rule-title">Respeite o espaço de respiro</p>
+          <p class="logo-rule-body">Mantenha uma área livre de, no mínimo, a altura da letra &ldquo;p&rdquo; em volta do mark. Não encoste em bordas ou outros elementos.</p>
+        </div>
+      </div>
+      <div class="logo-rule do reveal">
+        <span class="logo-rule-icon">DO</span>
+        <div>
+          <p class="logo-rule-title">Tamanhos mínimos</p>
+          <p class="logo-rule-body">Mark sozinho ≥ 24px. Mark + wordmark ≥ 96px de largura. Abaixo disso, a casa vira ruído.</p>
+        </div>
+      </div>
+      <div class="logo-rule dont reveal">
+        <span class="logo-rule-icon">NÃO</span>
+        <div>
+          <p class="logo-rule-title">Não deformar nem girar</p>
+          <p class="logo-rule-body">Sem rotação, sem espelhamento, sem esticar. A geometria da casa e do sol é fixa.</p>
+        </div>
+      </div>
+      <div class="logo-rule dont reveal">
+        <span class="logo-rule-icon">NÃO</span>
+        <div>
+          <p class="logo-rule-title">Não trocar as cores do gradiente</p>
+          <p class="logo-rule-body">O pôr do sol é âmbar → coral, sempre. Não inverter, não substituir por azul ou verde.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+   07 · CORES
+     ══════════════════════════════════════════════ -->
+<section class="section" id="cores">
+  <div class="section-inner">
+    <p class="sec-eyebrow reveal">07 · cores</p>
+    <h2 class="sec-title reveal">Pôr do sol dourado: âmbar, coral, açaí e areia.</h2>
+    <div class="sec-rule reveal"></div>
+    <p class="sec-body reveal">
+      A paleta nasce de um horizonte de sol: âmbar, mel e resina como base quente.
+      O verde mata e o azul mar entram como apoio — natureza presente, sem roubar a cena.
+      O <strong>açaí</strong> estende o horizonte até o crepúsculo: é a cor do CTA
+      primário e a primeira de uma família extensível (base + hover + soft + fg + text).
+    </p>
+
+    <h3 class="color-group-title">claro — &ldquo;tarde na areia&rdquo;</h3>
+    <div class="swatch-grid">
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#FAF5EC"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--areia</p>
+          <p class="swatch-hex">#FAF5EC</p>
+          <p class="swatch-role">fundo da página</p>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#F2EBDF"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--areia-2</p>
+          <p class="swatch-hex">#F2EBDF</p>
+          <p class="swatch-role">fundo de seção alterna</p>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#E9E0D0"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--areia-3</p>
+          <p class="swatch-hex">#E9E0D0</p>
+          <p class="swatch-role">hover de cards</p>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#241A10"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--noite</p>
+          <p class="swatch-hex">#241A10</p>
+          <p class="swatch-role">texto principal</p>
+          <span class="swatch-aa">AA · 15.5:1</span>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#4A3A28"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--noite-2</p>
+          <p class="swatch-hex">#4A3A28</p>
+          <p class="swatch-role">texto secundário</p>
+          <span class="swatch-aa">AA · 8:1</span>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#6E5C46"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--noite-3</p>
+          <p class="swatch-hex">#6E5C46</p>
+          <p class="swatch-role">texto muted</p>
+          <span class="swatch-aa">AA · 5.5:1</span>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#8F7C64"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--noite-4</p>
+          <p class="swatch-hex">#8F7C64</p>
+          <p class="swatch-role">labels faint — só grande</p>
+          <span class="swatch-aa">3.5:1</span>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#F2A93B"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--ambar</p>
+          <p class="swatch-hex">#F2A93B</p>
+          <p class="swatch-role">marca / glow / destaque — nunca botão</p>
+          <span class="swatch-aa">AA · 7.6:1</span>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#C57A1F"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--mel</p>
+          <p class="swatch-hex">#C57A1F</p>
+          <p class="swatch-role">hover / detalhes decorativos</p>
+          <span class="swatch-aa">decorativo</span>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#C9A96E"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--mel-alt</p>
+          <p class="swatch-hex">#C9A96E</p>
+          <p class="swatch-role">bordas / divisores</p>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#8C4C10"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--resina</p>
+          <p class="swatch-hex">#8C4C10</p>
+          <p class="swatch-role">eyebrows / labels</p>
+          <span class="swatch-aa">AA · 5.5:1</span>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#3D5C2A"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--mata</p>
+          <p class="swatch-hex">#3D5C2A</p>
+          <p class="swatch-role">sucesso / natureza</p>
+          <span class="swatch-aa">AA · 7:1</span>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#1E4A5C"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--mar</p>
+          <p class="swatch-hex">#1E4A5C</p>
+          <p class="swatch-role">oceano / suporte</p>
+          <span class="swatch-aa">AA · 8:1</span>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#5B21B6"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--acai</p>
+          <p class="swatch-hex">#5B21B6</p>
+          <p class="swatch-role">CTA primário — com texto claro</p>
+          <span class="swatch-aa">AA · 9:1</span>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#4C1D95"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--acai-2</p>
+          <p class="swatch-hex">#4C1D95</p>
+          <p class="swatch-role">hover do CTA</p>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:var(--acai-soft)"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--acai-soft</p>
+          <p class="swatch-hex">rgba(91,33,182,.14)</p>
+          <p class="swatch-role">pill / fundo suave de ação</p>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#BC3D1C"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--coral-deep</p>
+          <p class="swatch-hex">#BC3D1C</p>
+          <p class="swatch-role">links / hover de texto</p>
+          <span class="swatch-aa">AA · 5.1:1</span>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#FF6A47"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--coral</p>
+          <p class="swatch-hex">#FF6A47</p>
+          <p class="swatch-role">fill decorativo / chips</p>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:var(--line)"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--line</p>
+          <p class="swatch-hex">rgba(36,26,16,.10)</p>
+          <p class="swatch-role">bordas de UI</p>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="color-group-title">escuro — &ldquo;noite na praia&rdquo;</h3>
+    <div class="swatch-grid">
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#171009"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--areia</p>
+          <p class="swatch-hex">#171009</p>
+          <p class="swatch-role">fundo da página</p>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#1F1710"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--areia-2</p>
+          <p class="swatch-hex">#1F1710</p>
+          <p class="swatch-role">fundo de seção alterna</p>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#281F16"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--areia-3</p>
+          <p class="swatch-hex">#281F16</p>
+          <p class="swatch-role">hover de cards</p>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#F4EDDF"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--noite</p>
+          <p class="swatch-hex">#F4EDDF</p>
+          <p class="swatch-role">texto principal</p>
+          <span class="swatch-aa">AA ✓</span>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#D6CBB9"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--noite-2</p>
+          <p class="swatch-hex">#D6CBB9</p>
+          <p class="swatch-role">texto secundário</p>
+          <span class="swatch-aa">AA ✓</span>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#A8947C"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--noite-3</p>
+          <p class="swatch-hex">#A8947C</p>
+          <p class="swatch-role">texto muted</p>
+          <span class="swatch-aa">AA ✓</span>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#7E6C57"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--noite-4</p>
+          <p class="swatch-hex">#7E6C57</p>
+          <p class="swatch-role">labels faint — só grande</p>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#F0B257"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--ambar</p>
+          <p class="swatch-hex">#F0B257</p>
+          <p class="swatch-role">marca / glow / destaque — nunca botão</p>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#E8A75C"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--mel</p>
+          <p class="swatch-hex">#E8A75C</p>
+          <p class="swatch-role">hover / acentos textuais</p>
+          <span class="swatch-aa">AA ✓</span>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#9C845F"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--mel-alt</p>
+          <p class="swatch-hex">#9C845F</p>
+          <p class="swatch-role">bordas / divisores</p>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#D99B52"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--resina</p>
+          <p class="swatch-hex">#D99B52</p>
+          <p class="swatch-role">eyebrows / labels</p>
+          <span class="swatch-aa">AA ✓</span>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#6F8F52"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--mata</p>
+          <p class="swatch-hex">#6F8F52</p>
+          <p class="swatch-role">sucesso / natureza</p>
+          <span class="swatch-aa">AA ✓</span>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#5E8FA6"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--mar</p>
+          <p class="swatch-hex">#5E8FA6</p>
+          <p class="swatch-role">oceano / suporte</p>
+          <span class="swatch-aa">AA ✓</span>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#A78BFA"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--acai</p>
+          <p class="swatch-hex">#A78BFA</p>
+          <p class="swatch-role">CTA primário (glow) — tinta escura</p>
+          <span class="swatch-aa">AA ✓</span>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#C4B5FD"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--acai-2</p>
+          <p class="swatch-hex">#C4B5FD</p>
+          <p class="swatch-role">hover do CTA</p>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:var(--acai-soft)"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--acai-soft</p>
+          <p class="swatch-hex">rgba(167,139,250,.16)</p>
+          <p class="swatch-role">pill / fundo suave de ação</p>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#FF8A66"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--coral-deep</p>
+          <p class="swatch-hex">#FF8A66</p>
+          <p class="swatch-role">links / hover de texto</p>
+          <span class="swatch-aa">AA ✓</span>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:#FF6A47"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--coral</p>
+          <p class="swatch-hex">#FF6A47</p>
+          <p class="swatch-role">fill decorativo / chips</p>
+        </div>
+      </div>
+      <div class="swatch reveal">
+        <div class="swatch-block" style="background:var(--line)"></div>
+        <div class="swatch-info">
+          <p class="swatch-name">--line</p>
+          <p class="swatch-hex">rgba(244,237,223,.09)</p>
+          <p class="swatch-role">bordas de UI</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="roles-table reveal">
+      <div class="role-row">
+        <span class="role-name">brand</span>
+        <span class="role-desc">âmbar, mel, resina — a identidade. Logo, títulos, momentos de marca.</span>
+      </div>
+      <div class="role-row">
+        <span class="role-name">action</span>
+        <span class="role-desc">açaí (CTA com texto claro) + coral-deep (links). Nunca âmbar como botão.</span>
+      </div>
+      <div class="role-row">
+        <span class="role-name">support</span>
+        <span class="role-desc">mata e mar — sucesso, natureza e estados secundários, com moderação.</span>
+      </div>
+      <div class="role-row">
+        <span class="role-name">extend</span>
+        <span class="role-desc">família extensível: cada cor nova entra como base + hover + soft + fg + text (ex.: açaí). O horizonte vai do dourado ao crepúsculo.</span>
+      </div>
+      <div class="role-row">
+        <span class="role-name">status</span>
+        <span class="role-desc">reservado: mata = livre/ok, ambar = buffer/limpeza, coral = reservado/alerta.</span>
+      </div>
+      <div class="role-row">
+        <span class="role-name">text</span>
+        <span class="role-desc">noite (1→4). Tudo acima de 4.5:1 no fundo correspondente — WCAG AA. Verificado por token.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+   08 · TIPOGRAFIA
+     ══════════════════════════════════════════════ -->
+<section class="section alt" id="tipografia">
+  <div class="section-inner">
+    <p class="sec-eyebrow reveal">08 · tipografia</p>
+    <h2 class="sec-title reveal">DM Mono na frente, DM Sans no corpo.</h2>
+    <div class="sec-rule reveal"></div>
+    <p class="sec-body reveal">
+      Duas famílias open source (OFL). A mono protagoniza títulos, eyebrows e dados — o espírito
+      &ldquo;ferramenta&rdquo; do produto. A sans carrega o corpo, legível e confortável no dia a dia.
+    </p>
+
+    <div class="font-cards">
+      <div class="font-card mono reveal">
+        <div class="font-head">
+          <p class="font-name">DM Mono</p>
+          <p class="font-sub">open source · SIL OFL · display / labels / dados</p>
+        </div>
+        <div class="font-weights">
+          <div class="font-w"><span class="font-w-label">light 300</span><span class="font-w-sample">propical</span></div>
+          <div class="font-w"><span class="font-w-label">regular 400</span><span class="font-w-sample">propical</span></div>
+          <div class="font-w"><span class="font-w-label">medium 500</span><span class="font-w-sample" style="font-weight:500">propical</span></div>
+          <div class="font-w"><span class="font-w-label">italic 400</span><span class="font-w-sample" style="font-style:italic">propical</span></div>
+        </div>
+        <div class="font-uses">
+          <span class="font-use">display</span>
+          <span class="font-use">eyebrows</span>
+          <span class="font-use">labels</span>
+          <span class="font-use">dados</span>
+        </div>
+      </div>
+
+      <div class="font-card sans reveal">
+        <div class="font-head">
+          <p class="font-name">DM Sans</p>
+          <p class="font-sub">open source · SIL OFL · corpo / UI / captions</p>
+        </div>
+        <div class="font-weights">
+          <div class="font-w"><span class="font-w-label">regular 400</span><span class="font-w-sample">Uma casa na praia.</span></div>
+          <div class="font-w"><span class="font-w-label">medium 500</span><span class="font-w-sample" style="font-weight:500">Uma casa na praia.</span></div>
+          <div class="font-w"><span class="font-w-label">semibold 600</span><span class="font-w-sample" style="font-weight:600">Uma casa na praia.</span></div>
+          <div class="font-w"><span class="font-w-label">bold 700</span><span class="font-w-sample" style="font-weight:700">Uma casa na praia.</span></div>
+        </div>
+        <div class="font-uses">
+          <span class="font-use">corpo</span>
+          <span class="font-use">botões</span>
+          <span class="font-use">captions</span>
+          <span class="font-use">formulários</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="type-scale reveal">
+      <div class="ts-row">
+        <span class="ts-label">display</span>
+        <span class="ts-sample ts-display">propical</span>
+        <span class="ts-meta">DM Mono 500 · clamp(2.2rem, 7vw, 3.6rem) · ls -0.02em</span>
+      </div>
+      <div class="ts-row">
+        <span class="ts-label">título de seção</span>
+        <span class="ts-sample ts-h2">Feito para o que dói.</span>
+        <span class="ts-meta">DM Mono 500 · clamp(1.4rem, 4vw, 2rem)</span>
+      </div>
+      <div class="ts-row">
+        <span class="ts-label">eyebrow</span>
+        <span class="ts-sample ts-eyebrow">o produto</span>
+        <span class="ts-meta">DM Mono 400 · 0.85rem · uppercase · ls 0.18em · resina</span>
+      </div>
+      <div class="ts-row">
+        <span class="ts-label">corpo</span>
+        <span class="ts-sample ts-body">O check-in começa com um dia novo: a casa pronta, o sol subindo, o host tranquilo porque as plataformas se falaram.</span>
+        <span class="ts-meta">DM Sans 400 · 1.0625rem · lh 1.65 · noite-2</span>
+      </div>
+      <div class="ts-row">
+        <span class="ts-label">caption</span>
+        <span class="ts-sample ts-caption">Sem cartão de crédito. Sem plano pago. Sem rastreamento.</span>
+        <span class="ts-meta">DM Sans 400 · 0.875rem · noite-3</span>
+      </div>
+      <div class="ts-row">
+        <span class="ts-label">dado</span>
+        <span class="ts-sample ts-data">31 · dez · 2026 — check-in 14:00</span>
+        <span class="ts-meta">DM Mono 400 · 0.85rem · noite</span>
+      </div>
+    </div>
+
+    <div class="type-rules">
+      <div class="type-rule reveal">
+        <span class="tick">✓</span>
+        <span class="type-rule-body">Base <code>1rem</code> (16px); corpo nunca abaixo de <code>0.85rem</code> (≈14px). Abaixo disso, só UI decorativa.</span>
+      </div>
+      <div class="type-rule reveal">
+        <span class="tick">✓</span>
+        <span class="type-rule-body">Alvos de toque ≥ <code>40px</code>. Botões e links nunca dependem só da cor (estado + ícone).</span>
+      </div>
+      <div class="type-rule reveal">
+        <span class="tick">✓</span>
+        <span class="type-rule-body">Fallbacks: <code>DM Sans → system-ui, Segoe UI, Roboto</code> · <code>DM Mono → ui-monospace, Menlo</code>.</span>
+      </div>
+      <div class="type-rule reveal">
+        <span class="tick">✓</span>
+        <span class="type-rule-body">Tipografia e espaçamento em <code>rem</code> — respeita a preferência de fonte do navegador. <code>px</code> só para bordas, raios, sombras e strokes (não escalam).</span>
+      </div>
+      <div class="type-rule reveal">
+        <span class="tick">i</span>
+        <span class="type-rule-body">Cirílico: DM não cobre RU — as páginas RU degradam ao fallback. Foco atual é <code>pt-BR</code>; se RU voltar a ser prioridade, swap para IBM Plex.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+   09 · COMPONENTES
+     ══════════════════════════════════════════════ -->
+<section class="section" id="componentes">
+  <div class="section-inner">
+    <p class="sec-eyebrow reveal">09 · componentes</p>
+    <h2 class="sec-title reveal">Receitas de interface.</h2>
+    <div class="sec-rule reveal"></div>
+    <p class="sec-body reveal">Os blocos prontos do sistema — botões, links, labels e o calendário que virou identidade.</p>
+
+    <div class="comp-grid">
+      <div class="comp-card reveal">
+        <div class="comp-head">
+          <span class="comp-name">Botão primário</span>
+          <span class="comp-token">--acai + tinta clara</span>
+        </div>
+        <div class="comp-stage">
+          <a class="btn btn-primary" href="#top">Começar — grátis pra sempre</a>
+        </div>
+      </div>
+
+      <div class="comp-card reveal">
+        <div class="comp-head">
+          <span class="comp-name">Botão secundário</span>
+          <span class="comp-token">--areia + --line-2 (outline neutro)</span>
+        </div>
+        <div class="comp-stage">
+          <a class="btn btn-secondary" href="#top">Ler o código fonte</a>
+        </div>
+      </div>
+
+      <div class="comp-card reveal">
+        <div class="comp-head">
+          <span class="comp-name">Link com squiggle</span>
+          <span class="comp-token">--coral-deep</span>
+        </div>
+        <div class="comp-stage">
+          <a class="squiggle-link" href="#top">
+            Testar o assistente sem cadastro
+            <svg viewBox="0 0 220 10" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M2 6 Q 55 1, 110 5 T 218 5"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="comp-card reveal">
+        <div class="comp-head">
+          <span class="comp-name">Eyebrow / label</span>
+          <span class="comp-token">DM Mono · --resina</span>
+        </div>
+        <div class="comp-stage">
+          <span class="eyebrow-demo">sincronização iCal</span>
+        </div>
+      </div>
+
+      <div class="comp-card reveal">
+        <div class="comp-head">
+          <span class="comp-name">Chip de plataforma</span>
+          <span class="comp-token">--areia + cor da marca</span>
+        </div>
+        <div class="comp-stage">
+          <span class="pill-demo"><span class="platform-dot" style="background:#FF385C"></span>Airbnb</span>
+          <span class="pill-demo"><span class="platform-dot" style="background:#003580"></span>Booking.com</span>
+          <span class="pill-demo"><span class="platform-dot" style="background:#245ABC"></span>Vrbo</span>
+        </div>
+      </div>
+
+      <div class="comp-card reveal">
+        <div class="comp-head">
+          <span class="comp-name">Chip de status</span>
+          <span class="comp-token">--tone-* · app atoms/chip</span>
+        </div>
+        <div class="comp-stage">
+          <span class="chip-demo success">OK</span>
+          <span class="chip-demo warning">buffer</span>
+          <span class="chip-demo error">conflito</span>
+          <span class="chip-demo info">sincronizando</span>
+          <span class="chip-demo action">ação</span>
+          <span class="chip-demo neutral">feed público</span>
+        </div>
+      </div>
+
+      <div class="comp-card reveal">
+        <div class="comp-head">
+          <span class="comp-name">Badge</span>
+          <span class="comp-token">--acai · app ui/badge</span>
+        </div>
+        <div class="comp-stage">
+          <span class="badge-demo default">novo</span>
+          <span class="badge-demo secondary">beta</span>
+          <span class="badge-demo outline">open source</span>
+        </div>
+      </div>
+
+      <div class="comp-card reveal">
+        <div class="comp-head">
+          <span class="comp-name">Card de painel</span>
+          <span class="comp-token">--surface-raised · app ui/card</span>
+        </div>
+        <div class="comp-stage">
+          <div class="app-card">
+            <div class="app-card-head">
+              <div>
+                <p class="app-card-eyebrow">próximas estadias</p>
+                <p class="app-card-title">Casa na Praia</p>
+              </div>
+              <span class="badge-demo default">2 reservas</span>
+            </div>
+            <div class="app-card-row"><span>check-in</span><span class="val">31 · dez · 14:00</span></div>
+            <div class="app-card-row"><span>hóspede</span><span class="val">Ana Souza</span></div>
+            <div class="app-card-row"><span>plataforma</span><span class="val"><span class="platform-dot" style="background:#FF385C"></span>Airbnb</span></div>
+            <a class="btn btn-primary app-card-cta" href="#top">Ver reserva</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="comp-card reveal">
+        <div class="comp-head">
+          <span class="comp-name">PageHeader</span>
+          <span class="comp-token">--noite + --noite-3 · app ui/molecules/page-header</span>
+        </div>
+        <div class="comp-stage">
+          <div class="page-header-demo">
+            <div>
+              <p class="ph-title">Sincronização</p>
+              <p class="ph-sub">Última atualização há 12 min</p>
+            </div>
+            <div class="ph-actions">
+              <a class="btn btn-secondary" href="#top">Atualizar</a>
+              <a class="btn btn-primary" href="#top">Novo</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="comp-card reveal">
+        <div class="comp-head">
+          <span class="comp-name">PropertySwitcher</span>
+          <span class="comp-token">--acai + --areia-2 · app components/property-switcher</span>
+        </div>
+        <div class="comp-stage">
+          <div class="prop-switcher-demo">
+            <span class="ps-eyebrow">propriedade</span>
+            <div class="ps-pills">
+              <span class="ps-pill active">Todas</span>
+              <span class="ps-pill idle">Casa na Praia</span>
+              <span class="ps-pill idle">Apto Centro</span>
+              <span class="ps-pill idle">Chalé Serra</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="comp-card reveal">
+        <div class="comp-head">
+          <span class="comp-name">Calendário</span>
+          <span class="comp-token">mata · ambar · coral</span>
+        </div>
+        <div class="comp-stage">
+          <div class="mini-cal">
+            <div class="mini-cal-head">
+              <span>dezembro 2026</span>
+              <span>◀ ▶</span>
+            </div>
+            <div class="mini-cal-grid">
+              <span class="mini-cal-cell dim">28</span>
+              <span class="mini-cal-cell dim">29</span>
+              <span class="mini-cal-cell dim">30</span>
+              <span class="mini-cal-cell dim">1</span>
+              <span class="mini-cal-cell booked">2</span>
+              <span class="mini-cal-cell booked">3</span>
+              <span class="mini-cal-cell booked">4</span>
+              <span class="mini-cal-cell booked">5</span>
+              <span class="mini-cal-cell buffer">6</span>
+              <span class="mini-cal-cell buffer">7</span>
+              <span class="mini-cal-cell free">8</span>
+              <span class="mini-cal-cell free">9</span>
+              <span class="mini-cal-cell free">10</span>
+              <span class="mini-cal-cell booked">11</span>
+              <span class="mini-cal-cell booked">12</span>
+              <span class="mini-cal-cell booked">13</span>
+              <span class="mini-cal-cell booked">14</span>
+              <span class="mini-cal-cell free">15</span>
+              <span class="mini-cal-cell free">16</span>
+              <span class="mini-cal-cell free">17</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="sec-body reveal" style="margin-top:1.5rem;">
+      <strong>Modo escuro:</strong> o mesmo sistema com tokens trocados — &ldquo;noite na praia&rdquo;. O
+      toggle existente (<code style="font-family:var(--mono)">rt-theme</code>) alterna a classe
+      <code style="font-family:var(--mono)">.dark</code> no &lt;html&gt;, e o brand book respeita
+      <code style="font-family:var(--mono)">prefers-color-scheme</code> e
+      <code style="font-family:var(--mono)">prefers-reduced-motion</code>.
+    </p>
+  </div>
+</section>
+
+</main>
+
+<!-- ══════════════════════════════════════════════
+     FOOTER
+     ══════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="fg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#F2A93B"/>
+            <stop offset="100%" stop-color="#FF6A47"/>
+          </linearGradient>
+        </defs>
+        <rect width="120" height="120" rx="26" fill="url(#fg)"/>
+        <circle cx="74" cy="40" r="26" fill="#FAF5EC"/>
+        <path d="M48 36 L24 64 L24 88 L72 88 L72 64 Z" fill="#241A10"/>
+      </svg>
+      <span class="footer-wordmark">propical</span>
+    </div>
+    <p class="footer-meta">
+      <span>sistema visual v1.1</span> · open source · pt-BR
+    </p>
+  </div>
+</footer>
+
+<script>
+  /* Theme toggle — persiste em localStorage, espelha no <html>. */
+  const toggle = document.getElementById('theme-toggle');
+  toggle.addEventListener('click', () => {
+    const dark = document.documentElement.classList.toggle('dark');
+    document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+    try { localStorage.setItem('bk-theme', dark ? 'dark' : 'light'); } catch (e) {}
+  });
+
+  /* Reveal on scroll */
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  revealEls.forEach((el) => observer.observe(el));
+</script>
+
+</body>
+</html>

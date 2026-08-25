@@ -1,0 +1,646 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ═══════════════════════════════════════════════════════════════════
+   DESIGN TOKENS — propical (brand book v1.1)
+   Tres capas:
+     Capa 1 · PRIMITIVOS (pt-BR, brand)   areia · noite · ambar · mel · resina · coral · mata · mar · acai · line
+     Capa 2 · SEMÁNTICOS (EN, por rol)    surface · text-* · action-* · border · link · status-* · chart-*
+     Capa 3 · COMPONENTES                 @theme inline → utilities · @utility tipográficas · ui/* (cva)
+   .dark re-pinta SOLO la capa de primitivos; los semánticos y slots se
+   resuelven contra ella automáticamente.
+   Mapeo rápido primitivo → rol semántico:
+     areia*      → surface*                    noite*      → text-primary/secondary/muted/faint
+     ambar/mel   → acción legacy (glow/pills)  acai*       → action-primary-* (CTA)
+     coral-deep  → link / destructive / status-booked
+     mata / mar  → success / info              line·line-2 → border·border-strong
+   Reglas: cero HEX en la capa semántica; máx. 2 capas de variables +
+   1 capa de clases de componente (lo resuelve cva en ui/*).
+   ═══════════════════════════════════════════════════════════════════ */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  /* Era `--font-geist-mono` (residuo del default de Next) — la variable
+     no existía y tiraba el mono al fallback. Ahora apunta a la variable de
+     next/font DM_Mono (`--font-mono` en el <html>). */
+  --font-mono: var(--font-mono);
+  /* Los títulos del brand son DM Mono (roles text-display/text-title/
+     text-eyebrow). --font-heading alimenta el slot shadcn CardTitle (hoy sin
+     uso en la app) — alineado con el brand. */
+  --font-heading: var(--font-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* — Semánticos → utilities (habilita bg-surface,
+       text-text-muted, border-border-strong, bg-action-primary, …) — */
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-hover: var(--surface-hover);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-faint: var(--text-faint);
+  --color-border-strong: var(--border-strong);
+  --color-action-primary: var(--action-primary-bg);
+  --color-action-primary-hover: var(--action-primary-hover);
+  --color-action-primary-soft: var(--action-primary-soft);
+  /* Tinta del CTA sobre açaí (--acai-fg) — habilita
+     text-action-primary-fg en los CTAs (nunca text-white). */
+  --color-action-primary-fg: var(--action-primary-fg);
+  --color-action-primary-text: var(--action-primary-text);
+  --color-action-primary-text-hover: var(--action-primary-text-hover);
+  --color-link: var(--link);
+  --color-success: var(--success);
+  --color-info: var(--info);
+  --color-status-buffer-fg: var(--status-buffer-fg);
+  --color-status-buffer-bg: var(--status-buffer-bg);
+  --color-status-buffer-border: var(--status-buffer-border);
+  --color-status-buffer-cell: var(--status-buffer-cell);
+  --color-status-buffer-stripe: var(--status-buffer-stripe);
+  --color-status-booked: var(--status-booked);
+  --color-status-free: var(--status-free);
+  /* tone chips — bg/fg de los pills de status/log-level */
+  --color-tone-success-bg: var(--tone-success-bg);
+  --color-tone-success-fg: var(--tone-success-fg);
+  --color-tone-error-bg: var(--tone-error-bg);
+  --color-tone-error-fg: var(--tone-error-fg);
+  --color-tone-warning-bg: var(--tone-warning-bg);
+  --color-tone-warning-fg: var(--tone-warning-fg);
+  --color-tone-info-bg: var(--tone-info-bg);
+  --color-tone-info-fg: var(--tone-info-fg);
+  /* messenger — bg/text/border de los canales de mensajería */
+  --color-messenger-whatsapp: var(--messenger-whatsapp);
+  --color-messenger-telegram: var(--messenger-telegram);
+}
+
+/* ───────────────────────────────────────────────────────────────────
+   CAPA 1 · PRIMITIVOS (light)
+   Valores finales del brand book. .dark re-pinta SOLO esta capa.
+   ─────────────────────────────────────────────────────────────────── */
+:root {
+  /* superficie */
+  --areia: #faf5ec;   /* surface (ex --bg) */
+  --areia-2: #f2ebdf; /* surface-raised (ex --bg-2) */
+  --areia-3: #e9e0d0; /* surface-hover (ex --bg-3) */
+  /* texto */
+  --noite: #241a10;   /* text-primary (ex --ink) */
+  --noite-2: #4a3a28; /* text-secondary (ex --ink-2) */
+  --noite-3: #6e5c46; /* text-muted (ex --ink-3) */
+  --noite-4: #715f47; /* text-faint — oscurecido de #8f7c64 (3.69:1)
+                       a 5.64:1 para pasar AA 4.5:1 a tamaño normal; sigue
+                       siendo el más claro de la escala (noite-3 = 5.9:1) */
+  /* acción */
+  --ambar: #f2a93b;   /* action-primary-bg (ex --m-accent) */
+  --mel: #c57a1f;     /* action-primary-hover (ex --m-accent-2) */
+  --mel-alt: #c9a96e; /* action-primary-soft (ex --m-accent-soft) */
+  /* tinta del CTA sobre ámbar. En light = --noite (#241A10);
+     en dark se re-pinta a --areia (#171009) porque --noite dark es crema
+     (invisible sobre el ámbar claro). Regla §3.2: CTA = ámbar con texto
+     oscuro, nunca blanco. */
+  --ambar-fg: #241a10;
+  /* texto ámbar AA: el ámbar #f2a93b como letra falla ~1.6:1.
+     --ambar-text es el ámbar oscuro que pasa 4.5:1 sobre surface y los
+     fondos suaves bg-action-primary/10-30 (5.12 en /30). */
+  --ambar-text: #8a4d0f;
+  --ambar-text-hover: #7a420d;
+  /* marca — valores finales del brand book */
+  --resina: #8c4c10;  /* eyebrow */
+  --coral-deep: #bc3d1c; /* link / destructive */
+  --coral: #ff6a47;   /* status-booked */
+  --mata: #3d5c2a;    /* success / status-free */
+  --mar: #1e4a5c;     /* info */
+  /* extensão — açaí (crepúsculo): CTA primário + família violeta.
+     El ámbar queda como marca/glow; el açaí es el color de acción. */
+  --acai: #5b21b6;    /* action-primary-bg */
+  --acai-2: #4c1d95;  /* action-primary-hover */
+  --acai-soft: rgba(91, 33, 182, 0.14); /* action-primary-soft */
+  --acai-fg: #ffffff; /* tinta del CTA sobre açaí (AA 9:1) */
+  --acai-text: #4c1d95; /* açaí como texto AA sobre surface */
+  --acai-text-hover: #3b1578;
+  /* líneas */
+  --line: rgba(36, 26, 16, 0.10);  /* border */
+  --line-2: rgba(36, 26, 16, 0.18); /* border-strong */
+  /* pills decorativas del hero (marketing) */
+  --pill-coral: rgba(255, 106, 71, 0.18);
+  --pill-ambar: rgba(242, 169, 59, 0.24);
+  --pill-mata: rgba(61, 92, 42, 0.16);
+  /* buffer / cleaning chip */
+  --cleaning-fg: #92400e;
+  --cleaning-bg: #fef3c7;
+  --cleaning-border: rgba(217, 119, 6, 0.32);
+  --cleaning-cell-bg: rgba(217, 119, 6, 0.06);
+  --cleaning-stripe: rgba(217, 119, 6, 0.18);
+  /* tone chips — derivados del brand (mata/coral/ambar/mar) */
+  --tone-success-bg: rgba(61, 92, 42, 0.15);
+  --tone-success-fg: #3d5c2a;
+  --tone-error-bg: rgba(188, 61, 28, 0.15);
+  --tone-error-fg: #bc3d1c;
+  --tone-warning-bg: rgba(242, 169, 59, 0.15);
+  --tone-warning-fg: #8c4c10;
+  --tone-info-bg: rgba(30, 74, 92, 0.15);
+  --tone-info-fg: #1e4a5c;
+  /* messenger — marca de los canales de mensajería (mismos en light/dark) */
+  --messenger-whatsapp: #25d366;
+  --messenger-telegram: #229ed9;
+}
+
+/* ───────────────────────────────────────────────────────────────────
+   CAPA 2 · SEMÁNTICOS + slots shadcn (light)
+   Cero valores directos: todo referencia primitivos. Los slots shadcn
+   que nombran un rol comparten la variable (--border); los que tienen
+    identidad propia de componente se declaran aquí como alias (--background,
+    --card, --muted, …). Excepciones con identidad propia: --input / --ring /
+    --destructive / --chart-* / --sidebar-*.
+   ─────────────────────────────────────────────────────────────────── */
+:root {
+  /* superficie + texto */
+  --surface: var(--areia);
+  --surface-raised: var(--areia-2);
+  --surface-hover: var(--areia-3);
+  --text-primary: var(--noite);
+  --text-secondary: var(--noite-2);
+  --text-muted: var(--noite-3);
+  --text-faint: var(--noite-4);
+  /* acción + enlaces + estados */
+  --action-primary-bg: var(--acai);
+  --action-primary-hover: var(--acai-2);
+  --action-primary-soft: var(--acai-soft);
+  --action-primary-fg: var(--acai-fg);
+  --action-primary-text: var(--acai-text);
+  --action-primary-text-hover: var(--acai-text-hover);
+  --link: var(--coral-deep);
+  --success: var(--mata);
+  --info: var(--mar);
+  /* status del calendario */
+  --status-buffer-fg: var(--cleaning-fg);
+  --status-buffer-bg: var(--cleaning-bg);
+  --status-buffer-border: var(--cleaning-border);
+  --status-buffer-cell: var(--cleaning-cell-bg);
+  --status-buffer-stripe: var(--cleaning-stripe);
+  --status-booked: var(--coral-deep); /* pill de ocupado — coral-deep (≥3 sobre areia) */
+  --status-free: var(--mata);
+  /* líneas */
+  --border: var(--line);
+  --border-strong: var(--line-2);
+
+  /* slots shadcn → semánticos (muere el 3.er vocabulario) */
+  --background: var(--surface);
+  --foreground: var(--text-primary);
+  --card: var(--surface-raised);
+  --card-foreground: var(--text-primary);
+  --popover: var(--surface-raised);
+  --popover-foreground: var(--text-primary);
+  --primary: var(--noite);
+  --primary-foreground: var(--areia);
+  --secondary: var(--surface-hover);
+  --secondary-foreground: var(--text-primary);
+  --muted: var(--surface-hover);
+  --muted-foreground: var(--text-muted);
+  --accent: var(--surface-hover);
+  --accent-foreground: var(--text-primary);
+  --radius: 0.625rem;
+
+  /* excepciones con identidad propia — referencian
+     primitivos (cero valores directos) y resuelven en ambos temas porque
+     .dark re-pinta los primitivos. */
+  --input: var(--line-2);
+  --ring: var(--acai);
+  --destructive: var(--coral-deep);
+  --chart-1: var(--acai);
+  --chart-2: var(--mata);
+  --chart-3: var(--mar);
+  --chart-4: var(--coral);
+  --chart-5: var(--resina);
+  --sidebar: var(--surface);
+  --sidebar-foreground: var(--text-primary);
+  --sidebar-primary: var(--noite);
+  --sidebar-primary-foreground: var(--areia);
+  --sidebar-accent: var(--surface-hover);
+  --sidebar-accent-foreground: var(--text-primary);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+}
+
+/* Hybrid dark theme: Apple precision + Airbnb warmth */
+/* .dark re-pinta SOLO la capa de primitivos; los semánticos y slots se
+   resuelven contra ella automáticamente (var() resuelve en el contexto). */
+.dark {
+  /* superficie */
+  --areia: #171009;
+  --areia-2: #1f1710;
+  --areia-3: #281f16;
+  /* texto */
+  --noite: #f4eddf;
+  --noite-2: #d6cbb9;
+  --noite-3: #a8947c;
+  --noite-4: #99866f; /* text-faint dark — aclarado de #7e6c57
+                       (3.74:1) a 5.38:1 surface / 5.04 raised / 4.62 hover
+                       para AA 4.5:1; sigue siendo el más oscuro de la escala
+                       dark (noite-3 = #a8947c) */
+  /* acción */
+  --ambar: #f0b257;
+  --mel: #e8a75c;
+  --mel-alt: #9c845f;
+  /* tinta del CTA sobre ámbar (dark): --areia (#171009) — --noite dark es
+     crema e invisible sobre el ámbar claro. */
+  --ambar-fg: #171009;
+  /* texto ámbar AA (dark): --mel dark (#e8a75c) pasa 4.5:1 sobre surface
+     y los fondos suaves (4.61 en /30); hover = --ambar dark. */
+  --ambar-text: #e8a75c;
+  --ambar-text-hover: #f0b257;
+  /* marca */
+  --resina: #d99b52;
+  --coral-deep: #ff8a66;
+  --coral: #ff6a47;
+  --mata: #6f8f52;
+  --mar: #5e8fa6;
+  /* extensão — açaí (crepúsculo) dark: violeta claro, tinta escura */
+  --acai: #a78bfa;    /* action-primary-bg */
+  --acai-2: #c4b5fd;  /* action-primary-hover */
+  --acai-soft: rgba(167, 139, 250, 0.16); /* action-primary-soft */
+  --acai-fg: #241a10; /* tinta del CTA sobre açaí dark (AA 6.3:1) */
+  --acai-text: #c4b5fd; /* açaí como texto AA sobre surface dark */
+  --acai-text-hover: #a78bfa;
+  /* líneas */
+  --line: rgba(244, 237, 223, 0.09);
+  --line-2: rgba(244, 237, 223, 0.16);
+  /* pills decorativas */
+  --pill-coral: rgba(255, 138, 102, 0.16);
+  --pill-ambar: rgba(240, 178, 87, 0.18);
+  --pill-mata: rgba(111, 143, 82, 0.20);
+  /* buffer / cleaning chip */
+  --cleaning-fg: #fcd34d;
+  --cleaning-bg: rgba(252, 211, 77, 0.14);
+  --cleaning-border: rgba(252, 211, 77, 0.34);
+  --cleaning-cell-bg: rgba(252, 211, 77, 0.06);
+  --cleaning-stripe: rgba(252, 211, 77, 0.18);
+  /* tone chips (dark) — re-derivados al brand */
+  --tone-success-bg: rgba(111, 143, 82, 0.15);
+  --tone-success-fg: #6f8f52;
+  --tone-error-bg: rgba(255, 138, 102, 0.15);
+  --tone-error-fg: #ff8a66;
+  --tone-warning-bg: rgba(240, 178, 87, 0.15);
+  --tone-warning-fg: #d99b52;
+  --tone-info-bg: rgba(94, 143, 166, 0.15);
+  --tone-info-fg: #5e8fa6;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    /* La fuente del brand es DM Sans (variable --font-sans de next/font).
+       Antes esto estaba hardcodeado a system-ui e ignoraba la variable. */
+    font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif;
+    /* 16px base — closer to Airbnb / industry comfort. Was 15px which
+       made dashboard chrome feel cramped. */
+    font-size: 16px;
+    line-height: 1.5;
+    letter-spacing: -0.01em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  html {
+    @apply font-sans;
+    /* Reserve scrollbar space always, even on short pages (e.g. /onboard
+       fits in the viewport on desktop). Without this, navigating from a
+       page that scrolls (home) to one that doesn't (onboard) shifts the
+       centered content right by ~7-8px because the scrollbar disappears.
+       `stable` keeps a 15-16px strip reserved on the right so layout is
+       horizontally identical across every page. */
+    scrollbar-gutter: stable;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   .editorial — alias de compatibilidad hacia la capa semántica.
+   El tema de-facto de TODA la app era esta clase; hoy es un alias a la
+   capa semántica. Las páginas que usan `className="editorial …"`
+   con `[var(--bg)]`, `[var(--ink)]`, `[var(--m-accent)]` etc. siguen
+   funcionando sin tocarse.
+   Los selectores utilitarios (.display/.mono/.grid-bg/.calendar-pills/
+   .hero-in/.underline-draw) se conservan tal cual.
+   ═══════════════════════════════════════════════════════════════════ */
+.editorial {
+  --bg: var(--surface);
+  --bg-2: var(--surface-raised);
+  --bg-3: var(--surface-hover);
+  --ink: var(--text-primary);
+  --ink-2: var(--text-secondary);
+  --ink-3: var(--text-muted);
+  --ink-4: var(--text-faint);
+  --m-accent: var(--action-primary-bg);
+  --m-accent-2: var(--action-primary-hover);
+  --m-accent-soft: var(--action-primary-soft);
+
+  background: var(--surface);
+  color: var(--text-primary);
+  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  letter-spacing: -0.011em;
+}
+
+/* — Roles tipográficos (capa 3 · @utility). Se emiten solo cuando una
+   página los usa. Piso tipográfico: ningún texto < 0.85rem. — */
+@utility text-eyebrow {
+  /* El brand usa DM Mono para eyebrows */
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--resina);
+}
+@utility text-data {
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85rem;
+  color: var(--noite);
+}
+@utility text-display {
+  /* El brand usa DM Mono para display/títulos */
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: clamp(2.2rem, 7vw, 3.6rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+  color: var(--noite);
+}
+@utility text-title {
+  /* El brand usa DM Mono para display/títulos */
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--noite);
+}
+@utility text-body {
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--noite-2);
+}
+@utility text-caption {
+  font-size: 0.875rem;
+  color: var(--noite-3);
+}
+/* Rayado diagonal de los días buffer del calendario. Un solo token
+   semántico para dashboard.tsx y calendar-sync.tsx. */
+@utility buffer-stripe {
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--status-buffer-stripe) 0,
+    var(--status-buffer-stripe) 2px,
+    transparent 2px,
+    transparent 4px
+  );
+}
+/* Reserva el gutter del scrollbar en contenedores con overflow-y-auto
+   (reemplaza el style={{ scrollbarGutter: "stable" }} inline). */
+@utility scrollbar-gutter-stable {
+  scrollbar-gutter: stable;
+}
+
+.editorial .display {
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+}
+.editorial .display-tight {
+  letter-spacing: -0.028em;
+  line-height: 1.05;
+}
+.editorial .mono {
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-feature-settings: "ss01", "cv11";
+}
+/* Calendar-month grid: cells are wider than tall (80×64 desktop, 56×48
+   mobile) so the pattern feels like an Airbnb / Booking month view, not
+   generic graph paper. The mask fades the edges so the headline reads
+   cleanly over the centre. Cell dims live in --grid-cell-w/h so the
+   .calendar-pills positions stay aligned across breakpoints. */
+.editorial .grid-bg,
+.editorial .calendar-pills {
+  --grid-cell-w: 80px;
+  --grid-cell-h: 64px;
+}
+@media (max-width: 640px) {
+  .editorial .grid-bg,
+  .editorial .calendar-pills {
+    --grid-cell-w: 56px;
+    --grid-cell-h: 48px;
+  }
+}
+.editorial .grid-bg {
+  background-image: linear-gradient(to right, var(--line) 1px, transparent 1px),
+                    linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+  background-size: var(--grid-cell-w) var(--grid-cell-h);
+  mask-image: radial-gradient(ellipse 70% 60% at center 45%, black 35%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at center 45%, black 35%, transparent 80%);
+}
+
+/* Faint coloured strips overlaid on the grid that suggest multi-day
+   bookings. Four pills (two coral / two ambar) placed at row 2, 3, 4, 5
+   of the .grid-bg above. Use --pill-coral / --pill-ambar tokens so each
+   theme's tuning lives in one place. Pill column offsets are mid-cell
+   (cell-w / 2); row offsets are 28% of cell-h to sit ~1/3 down each row. */
+.editorial .calendar-pills {
+  background-image:
+    /* Row 2 — coral pill, cells 2-5 (4-day stay) */
+    linear-gradient(
+      to right,
+      transparent calc(2 * var(--grid-cell-w) + var(--grid-cell-w) / 2),
+      var(--pill-coral) calc(2 * var(--grid-cell-w) + var(--grid-cell-w) / 2),
+      var(--pill-coral) calc(5 * var(--grid-cell-w) + var(--grid-cell-w) / 2),
+      transparent calc(5 * var(--grid-cell-w) + var(--grid-cell-w) / 2)
+    ),
+    /* Row 3 — ambar pill, cells 4-7 (3-day stay) */
+    linear-gradient(
+      to right,
+      transparent calc(4 * var(--grid-cell-w) + var(--grid-cell-w) / 2),
+      var(--pill-ambar) calc(4 * var(--grid-cell-w) + var(--grid-cell-w) / 2),
+      var(--pill-ambar) calc(7 * var(--grid-cell-w) + var(--grid-cell-w) / 2),
+      transparent calc(7 * var(--grid-cell-w) + var(--grid-cell-w) / 2)
+    ),
+    /* Row 4 — coral pill, cells 1-3 */
+    linear-gradient(
+      to right,
+      transparent calc(1 * var(--grid-cell-w) + var(--grid-cell-w) / 2),
+      var(--pill-coral) calc(1 * var(--grid-cell-w) + var(--grid-cell-w) / 2),
+      var(--pill-coral) calc(3 * var(--grid-cell-w) + var(--grid-cell-w) / 2),
+      transparent calc(3 * var(--grid-cell-w) + var(--grid-cell-w) / 2)
+    ),
+    /* Row 5 — ambar pill, cells 5-8 */
+    linear-gradient(
+      to right,
+      transparent calc(5 * var(--grid-cell-w) + var(--grid-cell-w) / 2),
+      var(--pill-ambar) calc(5 * var(--grid-cell-w) + var(--grid-cell-w) / 2),
+      var(--pill-ambar) calc(8 * var(--grid-cell-w) + var(--grid-cell-w) / 2),
+      transparent calc(8 * var(--grid-cell-w) + var(--grid-cell-w) / 2)
+    );
+  background-repeat: no-repeat;
+  background-position:
+    0 calc(2 * var(--grid-cell-h) + var(--grid-cell-h) * 0.28),
+    0 calc(3 * var(--grid-cell-h) + var(--grid-cell-h) * 0.28),
+    0 calc(4 * var(--grid-cell-h) + var(--grid-cell-h) * 0.28),
+    0 calc(5 * var(--grid-cell-h) + var(--grid-cell-h) * 0.28);
+  /* Slimmer pills (16px) so they look like a stay-bar inside a 64px row,
+     not a half-row colour band. */
+  background-size:
+    100% 22px,
+    100% 22px,
+    100% 22px,
+    100% 22px;
+  mask-image: radial-gradient(ellipse 75% 65% at center 50%, black 50%, transparent 95%);
+  -webkit-mask-image: radial-gradient(ellipse 75% 65% at center 50%, black 50%, transparent 95%);
+}
+
+/* Hero entrance — subtle blur-in, plays once. Intentionally cheap so
+   the first paint stays fast. */
+@keyframes hero-in {
+  from { opacity: 0; transform: translateY(10px); filter: blur(6px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+.editorial .hero-in { animation: hero-in 700ms cubic-bezier(.2,.7,.2,1) both; }
+.editorial .hero-in-2 { animation-delay: 80ms; }
+.editorial .hero-in-3 { animation-delay: 200ms; }
+.editorial .hero-in-4 { animation-delay: 360ms; }
+.editorial .hero-in-5 { animation-delay: 520ms; }
+
+/* Squiggle underline — draws itself once on load. */
+@keyframes underline-draw {
+  from { stroke-dashoffset: 280; }
+  to { stroke-dashoffset: 0; }
+}
+.editorial .underline-draw {
+  stroke-dasharray: 280;
+  stroke-dashoffset: 280;
+  animation: underline-draw 900ms 700ms cubic-bezier(.2,.7,.2,1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editorial .hero-in,
+  .editorial .underline-draw {
+    animation: none;
+    stroke-dashoffset: 0;
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+/* =========================================================
+   CLS isolation — tools to prevent layout shift when async UI
+   like banners and empty states mount after first paint.
+   `cls-isolate` confines the element's layout shift inside its
+   own subtree (no parent reflow). `animate-slide-down` makes
+   the eventual mount slide in instead of pop, so the visual
+   jump is softer even when CLS is unavoidable.
+========================================================= */
+.cls-isolate {
+  contain: layout style;
+}
+
+@keyframes slide-down {
+  from { transform: translateY(-8px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.animate-slide-down {
+  animation: slide-down 220ms cubic-bezier(.2, .7, .2, 1) both;
+}
+
+/* Right-side panel entrance — used by the date-actions side panel
+   that replaced the popover. Slides in from the right edge. */
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+.animate-slide-in-right {
+  animation: slide-in-right 240ms cubic-bezier(.2, .7, .2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-slide-down { animation: none; }
+  .animate-slide-in-right { animation: none; }
+}
+
+/* Native select dropdown styling — theme-aware (antes era
+   color-scheme: dark + grises hardcodeados que rompían el light mode).
+   El select hereda el color-scheme del <html> (que el boot script de
+   layout.tsx setea según el tema) y las opciones usan tokens brand. */
+select option {
+  background-color: var(--surface-raised);
+  color: var(--text-primary);
+  padding: 8px 12px;
+}
+
+select option:checked {
+  background-color: var(--surface-hover);
+}
+
+select option:hover {
+  background-color: var(--surface-hover);
+}
+
+/* Hide scrollbar utility */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+
+/* iOS Safari zooms the page in when a focused form control has a
+   font-size below 16px. The app's inputs are intentionally compact
+   (text-xs / text-sm) on desktop; on phone widths we bump every form
+   control to 16px so focusing a field never triggers that zoom. */
+@media (max-width: 767px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Safety net: no form control may exceed its container. Keeps native
+   date / time pickers (which iOS Safari renders wider than expected)
+   and any long-value field from pushing the page past the viewport. */
+input,
+select,
+textarea {
+  max-width: 100%;
+}

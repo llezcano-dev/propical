@@ -1,0 +1,19 @@
+{
+  "minTokens": 50,
+  "minLines": 5,
+  "format": ["typescript", "tsx"],
+  "ignorePattern": [
+    "**/docs/**",
+    "**/public/**",
+    "**/prisma/**",
+    "**/scripts/**",
+    "**/e2e/**",
+    "**/.next/**",
+    "**/.next-e2e/**",
+    "**/src/generated/**",
+    "**/coverage/**",
+    "**/report/**"
+  ],
+  "reporters": ["console"],
+  "threshold": 5
+}

@@ -1,0 +1,420 @@
+"use client";
+
+import { useState } from "react";
+import {
+  GUEST_UI_COPY,
+  type GuestPrivacyCopy,
+  type GuestUiCopy,
+} from "@/lib/guest-form-i18n";
+import { REPO_URL } from "@/lib/site";
+
+interface FormField {
+  id: string;
+  type: string;
+  label: string;
+  required: boolean;
+  helpText?: string;
+  options?: string[];
+}
+
+// Full guest-facing pre-arrival form: property header and the
+// answerable fields. The form is Portuguese-only — host content
+// (title / labels / options) and the standing UI strings are all pt,
+// with no language picker.
+export function GuestFormView({
+  token,
+  templateName,
+  fields,
+  propertyName,
+  guestName,
+  alreadySubmitted,
+  submittedAt,
+}: {
+  token: string;
+  templateName: string;
+  fields: FormField[];
+  propertyName: string;
+  guestName: string;
+  alreadySubmitted: boolean;
+  submittedAt: string | null;
+}) {
+  const copy = GUEST_UI_COPY;
+
+  const [values, setValues] = useState<Record<string, unknown>>({});
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [done, setDone] = useState(false);
+
+  const set = (id: string, v: unknown) => setValues((m) => ({ ...m, [id]: v }));
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/g/${token}/submit`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ answers: values }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error ?? copy.submitFailed);
+        return;
+      }
+      setDone(true);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const title = templateName || copy.titleFallback;
+
+  return (
+    <div>
+      <header className="mb-6">
+        <p className="text-sm uppercase tracking-wider text-[#a0a0a8]">
+          {propertyName}
+        </p>
+        <h1 className="mt-1 text-2xl font-semibold">{title}</h1>
+        <p className="mt-2 text-sm text-[#a0a0a8]">{copy.greeting(guestName)}</p>
+      </header>
+
+      {/* Trust / privacy panel — surfaces who hosts the data, how it's
+          stored, and the guest's GDPR rights inline so a wary guest
+          doesn't have to leave the page to feel safe filling it out.
+          Skipped once the form is already submitted — the question is
+          settled at that point. */}
+      {!alreadySubmitted && <GuestFormPrivacyPanel copy={copy.privacy} />}
+
+      {alreadySubmitted ? (
+        <div className="rounded-lg border border-emerald-500/40 bg-emerald-500/5 p-5">
+          <p className="text-sm font-medium text-emerald-300">{copy.thanks}</p>
+          {submittedAt && (
+            <p className="mt-1 text-sm text-[#a0a0a8]">
+              {copy.submittedOn(submittedAt)}
+            </p>
+          )}
+        </div>
+      ) : done ? (
+        <div className="rounded-lg border border-emerald-500/40 bg-emerald-500/5 p-5">
+          <p className="text-sm font-medium text-emerald-300">{copy.thanks}</p>
+        </div>
+      ) : (
+        <form onSubmit={submit} className="space-y-4">
+          {fields.map((f) => (
+            <FieldInput
+              key={f.id}
+              field={f}
+              value={values[f.id]}
+              onChange={(v) => set(f.id, v)}
+              copy={copy}
+            />
+          ))}
+
+          {error && (
+            <p className="rounded-md border border-rose-500/40 bg-rose-500/5 px-3 py-2 text-sm text-rose-300">
+              {error}
+            </p>
+          )}
+
+          <button
+            type="submit"
+            disabled={busy}
+            className="w-full rounded-md bg-[#ff385c] px-4 py-2.5 text-sm font-medium text-white disabled:opacity-50"
+          >
+            {busy ? copy.submitting : copy.submit}
+          </button>
+        </form>
+      )}
+    </div>
+  );
+}
+
+// Inline privacy / data-handling reassurance shown above the form. The
+// always-visible summary covers 80% of guest worries in one sentence;
+// the "Details" toggle expands into a short GDPR-aware breakdown plus
+// outbound links to the full policy and the open-source repo so a
+// genuinely concerned guest can verify everything themselves. Exported
+// so the host-side builder preview can render the exact same panel.
+export function GuestFormPrivacyPanel({ copy }: { copy: GuestPrivacyCopy }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <section
+      aria-label={copy.title}
+      className="mb-6 rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-4"
+    >
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="flex min-w-0 items-start gap-2.5">
+          <svg
+            aria-hidden
+            viewBox="0 0 24 24"
+            className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 2.5l8 3v6c0 5-3.5 8.8-8 10-4.5-1.2-8-5-8-10v-6l8-3z"
+            />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M9 12.5l2 2 4-4"
+            />
+          </svg>
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-[#e8e8ec]">{copy.title}</p>
+            <p className="mt-0.5 text-sm leading-relaxed text-[#a0a0a8]">
+              {copy.summary}
+            </p>
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={() => setOpen((o) => !o)}
+          aria-expanded={open}
+          className="shrink-0 rounded-md border border-[#1e2329] bg-[#161b22] px-2.5 py-1 text-sm font-medium text-[#a0a0a8] transition-colors hover:border-emerald-500/40 hover:text-[#e8e8ec]"
+        >
+          {open ? copy.hideDetails : copy.showDetails}
+        </button>
+      </div>
+
+      {open && (
+        <div className="mt-3 space-y-3 border-t border-emerald-500/15 pt-3">
+          {copy.bullets.map((b, i) => (
+            <div key={i}>
+              <p className="text-sm font-semibold text-[#e8e8ec]">{b.title}</p>
+            <p className="mt-0.5 text-sm leading-relaxed text-[#a0a0a8]">
+                {b.body}
+              </p>
+            </div>
+          ))}
+          <div className="flex flex-wrap gap-x-4 gap-y-1.5 pt-1 text-sm">
+            <a
+              href="/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-emerald-400 underline underline-offset-2 hover:text-emerald-300"
+            >
+              {copy.fullPolicyLabel} →
+            </a>
+            <a
+              href={REPO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-emerald-400 underline underline-offset-2 hover:text-emerald-300"
+            >
+              {copy.sourceLinkLabel} →
+            </a>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
+function FieldInput({
+  field,
+  value,
+  onChange,
+  copy,
+}: {
+  field: FormField;
+  value: unknown;
+  onChange: (v: unknown) => void;
+  copy: GuestUiCopy;
+}) {
+  const labelEl = (
+    <>
+      <span className="block text-sm font-medium text-[#e8e8ec]">
+        {field.label || copy.untitledQuestion}
+        {field.required && <span className="ml-1 text-[#ff385c]">*</span>}
+      </span>
+      {field.helpText && (
+        <span className="mt-0.5 block text-sm text-[#a0a0a8]">
+          {field.helpText}
+        </span>
+      )}
+    </>
+  );
+
+  const inputClass =
+    "mt-1.5 w-full rounded-md border border-[#1e2329] bg-[#161b22] px-3 py-2 text-sm text-[#e8e8ec] focus:outline-none focus:border-[#ff385c]";
+
+  switch (field.type) {
+    case "long-text":
+      return (
+        <label className="block">
+          {labelEl}
+          <textarea
+            rows={4}
+            value={(value as string) ?? ""}
+            onChange={(e) => onChange(e.target.value)}
+            required={field.required}
+            className={inputClass}
+          />
+        </label>
+      );
+    case "number":
+      return (
+        <label className="block">
+          {labelEl}
+          <input
+            type="number"
+            value={(value as string) ?? ""}
+            onChange={(e) => onChange(e.target.value)}
+            required={field.required}
+            className={inputClass}
+          />
+        </label>
+      );
+    case "date":
+      return (
+        <label className="block">
+          {labelEl}
+          <input
+            type="date"
+            value={(value as string) ?? ""}
+            onChange={(e) => onChange(e.target.value)}
+            required={field.required}
+            className={inputClass}
+          />
+        </label>
+      );
+    case "time":
+      return (
+        <label className="block">
+          {labelEl}
+          <input
+            type="time"
+            value={(value as string) ?? ""}
+            onChange={(e) => onChange(e.target.value)}
+            required={field.required}
+            className={inputClass}
+          />
+        </label>
+      );
+    case "phone":
+      return (
+        <label className="block">
+          {labelEl}
+          <input
+            type="tel"
+            value={(value as string) ?? ""}
+            onChange={(e) => onChange(e.target.value)}
+            required={field.required}
+            className={inputClass}
+          />
+        </label>
+      );
+    case "email":
+      return (
+        <label className="block">
+          {labelEl}
+          <input
+            type="email"
+            value={(value as string) ?? ""}
+            onChange={(e) => onChange(e.target.value)}
+            required={field.required}
+            className={inputClass}
+          />
+        </label>
+      );
+    case "yes-no":
+      return (
+        <fieldset className="block">
+          {labelEl}
+          <div className="mt-1.5 flex gap-2">
+            {(["yes", "no"] as const).map((opt) => (
+              <label
+                key={opt}
+                className="flex-1 rounded-md border border-[#1e2329] bg-[#161b22] px-3 py-2 text-sm text-[#e8e8ec] cursor-pointer text-center"
+              >
+                <input
+                  type="radio"
+                  name={field.id}
+                  value={opt}
+                  checked={value === opt}
+                  onChange={() => onChange(opt)}
+                  required={field.required}
+                  className="mr-2"
+                />
+                {opt === "yes" ? copy.yes : copy.no}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      );
+    case "select": {
+      const options = field.options ?? [];
+      return (
+        <label className="block">
+          {labelEl}
+          <select
+            value={(value as string) ?? ""}
+            onChange={(e) => onChange(e.target.value)}
+            required={field.required}
+            className={inputClass}
+          >
+            <option value="">{copy.selectPlaceholder}</option>
+            {options.map((o, i) => (
+              <option key={i} value={(field.options ?? [])[i] ?? o}>
+                {o}
+              </option>
+            ))}
+          </select>
+        </label>
+      );
+    }
+    case "multi-select": {
+      const options = field.options ?? [];
+      const baseOptions = field.options ?? [];
+      const arr = Array.isArray(value) ? (value as string[]) : [];
+      const toggle = (opt: string) =>
+        onChange(arr.includes(opt) ? arr.filter((v) => v !== opt) : [...arr, opt]);
+      return (
+        <fieldset className="block">
+          {labelEl}
+          <div className="mt-1.5 grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+            {options.map((o, i) => {
+              // The stored answer value is always the base Portuguese
+              // option so the host reads consistent submissions.
+              const stored = baseOptions[i] ?? o;
+              return (
+                <label
+                  key={i}
+                  className="flex min-w-0 items-center gap-2 rounded-md border border-[#1e2329] bg-[#161b22] px-3 py-2 text-sm text-[#e8e8ec] cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={arr.includes(stored)}
+                    onChange={() => toggle(stored)}
+                    className="shrink-0"
+                  />
+                  <span className="min-w-0 break-words">{o}</span>
+                </label>
+              );
+            })}
+          </div>
+        </fieldset>
+      );
+    }
+    case "short-text":
+    default:
+      return (
+        <label className="block">
+          {labelEl}
+          <input
+            type="text"
+            value={(value as string) ?? ""}
+            onChange={(e) => onChange(e.target.value)}
+            required={field.required}
+            className={inputClass}
+          />
+        </label>
+      );
+  }
+}

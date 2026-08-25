@@ -1,0 +1,251 @@
+import { NextRequest, NextResponse } from "next/server";
+import { jwtVerify } from "jose";
+import { log } from "@/lib/logger";
+
+const JWT_SECRET_RAW = process.env.JWT_SECRET || "fallback-secret-change-me";
+const SECRET = new TextEncoder().encode(JWT_SECRET_RAW);
+const IS_DEFAULT_SECRET = JWT_SECRET_RAW === "fallback-secret-change-me";
+
+// ─────────────────────────── i18n routing ───────────────────────────
+// Locale is resolved per-visitor via cookie → browser Accept-Language →
+// DEFAULT_LOCALE. There are NO per-locale URL prefixes: every visitor
+// shares the same URL and the language is chosen by the `rt-locale`
+// cookie (set by the LocaleSwitcher) or the browser's language. This is
+// a deliberate product decision for a not-yet-published app — it keeps
+// URLs stable and avoids the SEO complexity of subdirectory routing.
+//
+// The resolved locale travels to server components via the `x-locale`
+// request header (read by getLocale() in src/lib/i18n/server.ts). The
+// `x-pathname` header carries the user-visible path so getCanonicalPath()
+// can build canonical URLs that match the address bar.
+//
+// Adding a new language:
+//   1. Append its code to SUPPORTED_LOCALES below.
+//   2. Add the COPY block in each marketing page.
+//   3. Done — no new route files, no middleware changes.
+const SUPPORTED_LOCALES = ["en", "pt", "es"] as const;
+const DEFAULT_LOCALE = "pt";
+
+// Map a browser language code (from Accept-Language) to a supported
+// locale. Only the primary language subtag is considered (e.g. "pt-BR"
+// → "pt"). Unknown languages fall through to DEFAULT_LOCALE.
+const BROWSER_LOCALE_MAP: Record<string, string> = {
+  en: "en",
+  pt: "pt",
+  es: "es",
+};
+
+function detectLocaleFromAcceptLanguage(acceptLanguage: string | null): string | null {
+  if (!acceptLanguage) return null;
+  const first = acceptLanguage.split(",")[0]?.trim().toLowerCase();
+  if (!first) return null;
+  const lang = first.split("-")[0];
+  return BROWSER_LOCALE_MAP[lang] ?? null;
+}
+
+const PUBLIC_PATHS = [
+  "/login",
+  "/signup",
+  "/reset-password", // public password-reset page (unauthenticated by definition)
+  "/terms",
+  "/privacy",
+  "/onboard",
+  "/api/auth/login",
+  "/api/auth/signup",
+  "/api/auth/verify-email", // step 2 of email-verified signup — pre-login
+  "/api/auth/forgot-password", // password-reset request — pre-login
+  "/api/auth/reset-password", // password-reset confirm — pre-login
+  "/api/auth/google", // covers /api/auth/google + /callback + /one-tap (startsWith match)
+  "/api/onboard", // covers /api/onboard + /api/onboard/test-platform (startsWith)
+  "/api/calendar/feed",
+  "/api/calendar/cron",
+  "/api/health",
+  "/api/site-config",
+  "/monitoring", // Sentry tunnel route (next.config.ts → withSentryConfig) — browser SDK POSTs here
+  "/g", // public guest-form fill-in page at /g/[token]
+  "/api/g", // public submit endpoint at /api/g/[token]/submit
+  "/api/feedback", // site-wide feedback endpoint — accepts anonymous POSTs, rate-limited by IP-hash at the route layer
+  "/api/test-fixtures", // e2e-only: dynamic iCal fixtures with relative dates (no auth so the server-side sync fetch can read them)
+];
+
+function clientIpFromRequest(request: NextRequest): string {
+  const fwd = request.headers.get("x-forwarded-for");
+  if (fwd) return fwd.split(",")[0].trim();
+  return request.headers.get("x-real-ip") || "unknown";
+}
+
+function logRequest(
+  request: NextRequest,
+  response: NextResponse,
+  startedAt: number,
+  userId?: number
+) {
+  log({
+    msg: "http",
+    method: request.method,
+    path: request.nextUrl.pathname,
+    status: response.status,
+    durationMs: Date.now() - startedAt,
+    userId: userId ?? null,
+    ip: clientIpFromRequest(request),
+  });
+}
+
+// Security headers applied to every response
+function withSecurityHeaders(response: NextResponse): NextResponse {
+  response.headers.set("X-Frame-Options", "DENY");
+  response.headers.set("X-Content-Type-Options", "nosniff");
+  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+  // CSP — allow self + inline (Next.js needs unsafe-inline for hydration).
+  // accounts.google.com is allowed in script-src and frame-src so Google
+  // One Tap and the Continue-with-Google flow can load their script and
+  // render the consent iframe.
+  response.headers.set(
+    "Content-Security-Policy",
+    [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com",
+      "style-src 'self' 'unsafe-inline' fonts.googleapis.com https://accounts.google.com",
+      "font-src 'self' data: fonts.gstatic.com",
+      "img-src 'self' data: blob: https:",
+      "connect-src 'self' https:",
+      "frame-src 'self' https://accounts.google.com",
+      "frame-ancestors 'none'",
+      "base-uri 'self'",
+      "form-action 'self' https://accounts.google.com",
+    ].join("; ")
+  );
+  return response;
+}
+
+// Auth pages carrying a `?next=` param are infinite-variant URLs — one
+// per landing page × locale, generated by sign-in / sign-up CTAs.
+// They all canonical-tag back to the bare /login (or /signup), so Google
+// already excludes them from the index, but it still crawls every
+// permutation. Tagging the param-variants `X-Robots-Tag: noindex` makes
+// Google drop them from the crawl set on the next pass — the bare
+// /login + /signup (no param) stay indexable, untouched.
+function isParamAuthPage(request: NextRequest, restPath: string): boolean {
+  if (restPath !== "/login" && restPath !== "/signup") return false;
+  return request.nextUrl.searchParams.has("next");
+}
+
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const startedAt = Date.now();
+
+  // ── i18n routing ──
+  // Resolve the visitor's locale: cookie (explicit choice) → browser
+  // Accept-Language (first visit) → DEFAULT_LOCALE. There are no URL
+  // prefixes to rewrite or reconcile — the URL is locale-agnostic and
+  // the language travels via the x-locale header.
+  const cookieLocale = request.cookies.get("rt-locale")?.value;
+  const resolvedLocale = SUPPORTED_LOCALES.includes(cookieLocale as typeof SUPPORTED_LOCALES[number])
+    ? (cookieLocale as string)
+    : detectLocaleFromAcceptLanguage(request.headers.get("accept-language")) ?? DEFAULT_LOCALE;
+  const i18nHeaders = new Headers(request.headers);
+  i18nHeaders.set("x-locale", resolvedLocale);
+  i18nHeaders.set("x-pathname", pathname);
+
+  // Refuse to authenticate against the default secret in production
+  if (IS_DEFAULT_SECRET && process.env.NODE_ENV === "production" && !PUBLIC_PATHS.some(p => pathname.startsWith(p))) {
+    const r = new NextResponse("JWT_SECRET not configured. Set the JWT_SECRET env var to a strong random string.", { status: 500 });
+    logRequest(request, r as NextResponse, startedAt);
+    return r;
+  }
+
+  // Allow public paths
+  // Special-case "/" so it behaves as exact-match (PUBLIC_PATHS uses startsWith,
+  // and "/" would match every path). The landing page itself redirects to
+  // /dashboard for logged-in visitors via getSession().
+  if (pathname === "/" || PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
+    const r = withSecurityHeaders(
+      NextResponse.next({ request: { headers: i18nHeaders } }),
+    );
+    // Default-locale /login?next=… and /signup?next=… (the prefixed
+    // /de/login?next=… etc. are handled in the locale-rewrite branch
+    // above).
+    if (isParamAuthPage(request, pathname)) {
+      r.headers.set("X-Robots-Tag", "noindex");
+    }
+    logRequest(request, r, startedAt);
+    return r;
+  }
+
+  // Allow static assets and Next.js internals (skip logging — too noisy)
+  if (
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/favicon") ||
+    pathname.includes(".")
+  ) {
+    return NextResponse.next();
+  }
+
+  // Build a login redirect that preserves the requested path as ?next=
+  const buildLoginRedirect = () => {
+    const url = new URL("/login", request.url);
+    const target = pathname + (request.nextUrl.search || "");
+    if (target && target !== "/" && target !== "/login") {
+      url.searchParams.set("next", target);
+    }
+    return NextResponse.redirect(url);
+  };
+
+  // Check session cookie
+  const token = request.cookies.get("propical-session")?.value;
+  if (!token) {
+    const r = pathname.startsWith("/api/")
+      ? withSecurityHeaders(NextResponse.json({ error: "Unauthorized" }, { status: 401 }))
+      : buildLoginRedirect();
+    logRequest(request, r, startedAt);
+    return r;
+  }
+
+  try {
+    const { payload } = await jwtVerify(token, SECRET);
+    const userId = typeof (payload as { userId?: unknown }).userId === "number"
+      ? (payload as { userId: number }).userId
+      : undefined;
+    const role = typeof (payload as { role?: unknown }).role === "string"
+      ? (payload as { role: string }).role
+      : undefined;
+    const impersonatorId = typeof (payload as { impersonatorId?: unknown }).impersonatorId === "number"
+      ? (payload as { impersonatorId: number }).impersonatorId
+      : undefined;
+
+    // Gate /api/admin/* at the boundary — only superadmins can reach
+    // any admin route, with ONE exception: the exit-impersonation
+    // endpoint. When the current session is an impersonation, the JWT
+    // identifies as the target user (role="user") so a naive
+    // role !== "superadmin" check would lock the admin OUT of their
+    // own exit path. Allow it when impersonatorId is set — that field
+    // only appears on tokens minted by the impersonate endpoint, which
+    // already validated superadmin at issue time.
+    if (pathname.startsWith("/api/admin/") && role !== "superadmin") {
+      const isExitImpersonation =
+        pathname === "/api/admin/exit-impersonation" && impersonatorId !== undefined;
+      if (!isExitImpersonation) {
+        const r = withSecurityHeaders(
+          NextResponse.json({ error: "Forbidden" }, { status: 403 })
+        );
+        logRequest(request, r, startedAt, userId);
+        return r;
+      }
+    }
+
+    const r = withSecurityHeaders(NextResponse.next({ request: { headers: i18nHeaders } }));
+    logRequest(request, r, startedAt, userId);
+    return r;
+  } catch {
+    const r = pathname.startsWith("/api/")
+      ? withSecurityHeaders(NextResponse.json({ error: "Unauthorized" }, { status: 401 }))
+      : buildLoginRedirect();
+    logRequest(request, r, startedAt);
+    return r;
+  }
+}
+
+export const config = {
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+};

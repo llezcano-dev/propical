@@ -1,0 +1,2 @@
+patchedDependencies:
+  eslint-plugin-react: patches/eslint-plugin-react.patch

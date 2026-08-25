@@ -1,0 +1,12 @@
+{
+  "$schema": "./node_modules/fallow/schema.json",
+  "ignorePatterns": ["scripts/**", "src/generated/**", "e2e/**"],
+  "ignoreDependencies": ["lucide-react", "@axe-core/playwright", "tailwindcss"],
+  "rules": {
+    "unused-files": "error",
+    "unused-exports": "warn",
+    "unused-types": "warn",
+    "unused-dependencies": "error",
+    "unused-dev-dependencies": "warn"
+  }
+}
