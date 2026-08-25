@@ -13,4 +13,4 @@ export const REPO_URL = "https://github.com/llezcano-dev/propical";
 export const OPERATOR_NAME = "Leandro Lezcano";
 
 /** Sole public contact email (support, legal, privacy). */
-export const OPERATOR_EMAIL = "llezcano.dev@gmail.com";
+export const OPERATOR_EMAIL = "support@propical.com.br";

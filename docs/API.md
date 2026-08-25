@@ -19,7 +19,7 @@ cookie with `401 { "error": "Unauthorized" }`, except for these public paths:
 - `/api/calendar/cron`
 
 In the table below, **Auth** = `session` means a valid session cookie is required;
-`public` means no auth needed; `cron` means it expects `?token=$CRON_SECRET`.
+`public` means no auth needed; `cron` means it expects `?secret=$CRON_SECRET`.
 
 Errors follow `{ "error": string }`. Standard codes:
 
@@ -158,7 +158,7 @@ intended to be imported by Airbnb / Booking.com. Optional `?platform=` filter.
 Same content as above; the trailing filename is for platform compatibility
 (some require a `.ics` suffix in the URL).
 
-### `GET /api/calendar/cron?token=$CRON_SECRET` — cron
+### `GET /api/calendar/cron?secret=$CRON_SECRET` — cron
 Triggers the same sync as `POST /api/calendar/sync` but is meant to be hit
 by an external scheduler (cron-job.org). Rejects requests with the wrong token.
 

@@ -5,7 +5,7 @@ Step-by-step guide to deploy Propical to production using [Vercel](https://verce
 ## Prerequisites
 
 - A [Turso](https://turso.tech) account (free tier: 500 DBs, 9 GB storage, 500M row reads/month)
-- A [Vercel](https://vercel.com) account (Hobby plan supports cron)
+- A [Vercel](https://vercel.com) account
 - [Turso CLI](https://docs.turso.tech/cli/install) installed locally
 - Node.js 22+ and pnpm 10+
 
@@ -64,10 +64,20 @@ In **Vercel → Settings → Environment Variables**, add:
 | `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | Google OAuth client ID | Optional — enables "Continue with Google" |
 | `NEXT_PUBLIC_SENTRY_DSN` | Sentry DSN | Optional — error tracking |
 | `SENTRY_AUTH_TOKEN` | Sentry auth token | Optional — source map upload |
-| `RESEND_API_KEY` | Resend API key | Optional — email-verified signup |
-| `EMAIL_FROM` | `Propical <noreply@your-domain.com>` | Optional — sender address |
+| `RESEND_API_KEY` | Resend API key | Required for signup — email verification is always on in production |
+| `EMAIL_FROM` | `Propical <noreply@your-domain.com>` | Sender address — must be on a domain verified in Resend |
 
 > **Tip:** Set all variables for **Production**, **Preview**, and **Development** environments as needed. The Turso variables should be Production + Preview; `JWT_SECRET` and `CRON_SECRET` should differ per environment.
+
+### Verify your sending domain in Resend
+
+Resend does not allow free/public domains (`gmail.com`, `outlook.com`, `yahoo.com`) as the sender — you must own a custom domain (e.g. `propical.com.br`) and verify it:
+
+1. In **Resend → Domains → Add Domain**, enter your domain (a subdomain like `mail.propical.com.br` is recommended to isolate sending reputation).
+2. Resend shows DNS records — copy the **SPF** (TXT), **DKIM** (TXT), and **DMARC** (TXT) values.
+3. In your DNS host (e.g. [registro.br](https://registro.br) → domain → **Zona DNS**), create those TXT records. The root domain's default SPF (`v=spf1 -all`) must be replaced by Resend's SPF (`v=spf1 include:amazonses.com ~all`).
+4. Wait for DNS propagation (minutes, `TTL`-dependent) and click **Verify** in Resend until the status is **Verified**.
+5. Set `RESEND_API_KEY` + `EMAIL_FROM` (e.g. `Propical <noreply@mail.propical.com.br>`) and deploy.
 
 ### Deploy
 
@@ -75,23 +85,22 @@ Push to `main` (or your default branch). Vercel auto-deploys on every push.
 
 ## 4. Calendar sync cron
 
-Propical syncs iCal feeds every 10 minutes. This is handled by **Vercel Cron** (configured in `vercel.json`):
+Propical syncs iCal feeds every 10 minutes. This is handled by an **external scheduler** — Vercel Cron is NOT used (Hobby plan allows only 1 job/day).
 
-```json
-{
-  "crons": [
-    { "path": "/api/calendar/cron", "schedule": "*/10 * * * *" }
-  ]
-}
-```
+### Set up cron-job.org (recommended)
 
-When `CRON_SECRET` is set in Vercel, the cron job automatically sends `Authorization: Bearer <CRON_SECRET>` with each request. The `/api/calendar/cron` endpoint validates this header.
+1. Sign up at [cron-job.org](https://cron-job.org) (free tier: unlimited jobs).
+2. Create a new job:
+   - **URL:** the cron URL from the admin panel (**Tasks** tab → "Cron URL" section). It looks like `https://your-domain.vercel.app/api/calendar/cron?secret=YOUR_SECRET`.
+   - **Schedule:** every 10 minutes (`*/10 * * * *`).
+   - **Request method:** GET.
+3. Save and enable the job.
 
-**Limits:**
-- Vercel Hobby: 2 cron jobs, cron runs only on Production deployments.
-- Vercel Pro: 40 cron jobs.
+The cron URL includes `?secret=$CRON_SECRET` for authentication. You can also view the URL via `GET /api/calendar/cron-url` (superadmin only).
 
-No additional setup needed — the cron is active as soon as `vercel.json` is in the repo and `CRON_SECRET` is set.
+The endpoint also accepts `Authorization: Bearer <CRON_SECRET>` if you prefer header-based auth (e.g. for custom schedulers).
+
+> **Tip:** If `CRON_SECRET` is not set, it falls back to `JWT_SECRET`. Always set `CRON_SECRET` explicitly for clarity.
 
 ## 5. Custom domain
 
@@ -139,7 +148,7 @@ The old `scripts/backup-db.sh` (SQLite file backup with tiered retention) is no 
 
 ### Cron execution time
 
-Vercel Cron functions have a default timeout (10s on Hobby, 60s on Pro). If `syncAllCalendars` takes longer (many calendar links), the cron invocation may time out. Monitor via Vercel → Logs. If timeouts occur, consider splitting the sync into batches or upgrading to Pro.
+Vercel serverless functions have a timeout (60s on Hobby, 300s on Pro). If `syncAllCalendars` takes longer (many calendar links), the cron-job.org request may time out. Monitor via Vercel → Logs. If timeouts occur, consider splitting the sync into batches or upgrading to Pro.
 
 ---
 
@@ -147,7 +156,7 @@ Vercel Cron functions have a default timeout (10s on Hobby, 60s on Pro). If `syn
 
 **Build fails with "prisma generate" error.** Ensure `postinstall: prisma generate` runs (it's in `package.json`). The generate step is offline — it doesn't need a database connection.
 
-**Cron not firing.** Check: (1) `CRON_SECRET` is set in Vercel env, (2) `vercel.json` is in the repo root, (3) you're on a Production deployment (cron doesn't run on Preview).
+**Cron not firing.** Check: (1) `CRON_SECRET` is set in Vercel env, (2) the cron-job.org job is enabled and the URL is correct (check the Tasks panel in the admin UI), (3) the job status in cron-job.org shows "Success" — if it shows errors, check Vercel → Logs.
 
 **Database connection errors at runtime.** Verify `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` are set in Vercel → Settings → Environment Variables for the Production environment.
 

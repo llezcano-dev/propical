@@ -11,7 +11,7 @@
 // without a key still runs (the caller surfaces a friendly error).
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const EMAIL_FROM = process.env.EMAIL_FROM || "Propical <noreply@propical.com.br>";
+const EMAIL_FROM = process.env.EMAIL_FROM || "Propical <no-reply@mail.propical.com.br>";
 
 export interface SendEmailResult {
   ok: boolean;

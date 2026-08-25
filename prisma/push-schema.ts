@@ -616,7 +616,7 @@ CREATE INDEX IF NOT EXISTS "SeoOverride_path_idx" ON "SeoOverride"("path");
   const siteSettingDefaults: Array<{ key: string; value: string }> = [
     { key: "signup_enabled", value: "true" },
     { key: "landing_announcement", value: "" },
-    { key: "support_email", value: "llezcano.dev@gmail.com" },
+    { key: "support_email", value: "support@propical.com.br" },
     // Site-wide SEO defaults —. Empty string = fall back to the
     // hard-coded copy in src/app/layout.tsx so a fresh install still
     // ships sensible metadata before an admin sets these.
