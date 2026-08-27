@@ -246,8 +246,8 @@ public internet, which is exactly the set the guard blocks.
   DNS failure, so the attacker learns nothing to tune a bypass.
 
 Development exception: with `NODE_ENV !== "production"`, loopback targets
-over `http://` are allowed so the dev/e2e mock feeds at
-`http://localhost:3000/mock/*.ical` keep working.
+over `http://` are allowed so the dev/e2e test feeds at
+`http://localhost:3001/api/test/ical/*.ics` keep working.
 
 ### Residual risk: DNS rebinding
 

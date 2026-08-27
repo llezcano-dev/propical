@@ -136,10 +136,6 @@ authorized_keys
 # `git reset --hard` on deploys does not wipe author uploads.
 /public/uploads/
 
-# Generated dev-only iCal mocks. Created by `pnpm mock:ical`.
-# Dates are relative to "today", so they change on every run.
-/public/mock/
-
 # Local design references (Airbnb page saves used as visual references)
 # Contains third-party API keys embedded in vendor JS — never commit.
 design/

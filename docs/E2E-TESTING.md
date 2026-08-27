@@ -36,9 +36,8 @@ e2e/
 │   ├── auth.ts               ← Helpers: login(), signup(), logout(), assertProtectedRedirect()
 │   ├── db.ts                 ← Helpers: resetTestDb(), seedTestDb()
 │   └── property.ts           ← Helpers: createProperty(), addCalendarLink(), triggerSync(), etc.
-public/test-fixtures/
-├── airbnb-sample.ics         ← iCal de Airbnb con 4 eventos (3 reservas + 1 bloqueo)
-└── booking-sample.ics        ← iCal de Booking con 3 eventos (2 reservas + 1 bloqueo)
+src/app/api/test/ical/
+└── [platform]/route.ts        ← fixtures iCal (airbnb.ics/booking.ics realistas + airbnb-sample.ics e2e)
 scripts/
 └── run-e2e.sh                ← Script que levanta server, DB, y corre tests
 ```
@@ -277,76 +276,38 @@ Para futuros specs de calendar import y dashboard CRUD:
 
 ## Archivos iCal de test
 
-Servidos como estáticos por Next.js desde `/public/test-fixtures/`. El parser
-(`src/lib/ical.ts → parseICal`) los lee con `fetch()`.
+Servidos por la ruta dinámica `/api/test/ical/{platform}.ics` (App Router).
+El parser (`src/lib/ical.ts → parseICal`) los lee con `fetch()`. Gateados por
+`ENABLE_TEST_API` **solo en producción** (en dev/e2e siempre disponibles).
 
-### `airbnb-sample.ics`
+### `airbnb.ics` / `booking.ics` — realistas (para probar en prod)
 
-4 eventos con fechas en agosto-septiembre 2026 (siempre futuras):
+Fechas **fijas** (ancladas a una época constante) y UIDs estables, para que el
+feed "evolucione orgánicamente": reservas nuevas aparecen al correr el tiempo
+y las viejas quedan preservadas en la DB por el sync. Contenido realista por
+plataforma (SUMMARY `Reserved`, `Not available`, `CLOSED - Not available`,
+bloqueo manual, DESCRIPTION de Airbnb).
 
-| UID | SUMMARY | Fechas | Tipo |
-|-----|---------|--------|------|
-| `airbnb-res-001@e2e` | Reserved | 10-15 Ago | Reserva |
-| `airbnb-res-002@e2e` | Reserved | 20-24 Ago | Reserva |
-| `airbnb-block-001@e2e` | Not available | 5-7 Ago | Bloqueo |
-| `airbnb-res-003@e2e` | Reserved | 1-7 Sep | Reserva |
+### `airbnb-sample.ics` — minimalista (para e2e)
 
-### `booking-sample.ics`
+4 eventos con fechas **relativas a hoy** y UIDs estables `@e2e`:
 
-3 eventos:
+| UID | SUMMARY | Offset |
+|-----|---------|--------|
+| `airbnb-res-001@e2e` | Reserved | +2 → +7 |
+| `airbnb-res-002@e2e` | Reserved | +10 → +14 |
+| `airbnb-block-001@e2e` | Not available | +20 → +22 |
+| `airbnb-res-003@e2e` | Reserved | +30 → +36 |
 
-| UID | SUMMARY | Fechas | Tipo |
-|-----|---------|--------|------|
-| `booking-res-001@e2e` | Booking.com reservation | 12-18 Ago | Reserva |
-| `booking-res-002@e2e` | John Smith | 25-28 Ago | Reserva |
-| `booking-block-001@e2e` | Closed | 2-4 Ago | Bloqueo |
-
-**Overlap intencional**: Airbnb res-001 (10-15 Ago) se solapa con Booking
-res-001 (12-18 Ago) — permite testear detección de conflictos en calendario.
-
-**Nota**: Airbnb y Booking ponen datos diferentes en el iCal real. Estos
-fixtures son minimalistas y pueden necesitar ajustes cuando se implemente
-el spec de calendar import (el parser actual solo lee UID, SUMMARY, DTSTART,
-DTEND — no procesa DESCRIPTION ni otros campos extendidos).
-
-### Mocks para desarrollo manual (`public/mock/`)
-
-Para probar el import de iCal localmente con `pnpm dev`, usá los mocks
-generados en `/public/mock/`:
-
-```bash
-pnpm mock:ical
-```
-
-Esto crea/actualiza:
-
-- `public/mock/airbnb.ical`
-- `public/mock/booking.ical`
-
-Sus fechas son **relativas al día de hoy**, por lo que se regeneran cada vez
-que corrés el comando. Están en `.gitignore` y son editables a mano.
-
-**Diferencias clave con los fixtures de e2e**:
-
-| | `public/test-fixtures/` | `public/mock/` |
-|---|---|---|
-| Uso | e2e (`calendar.spec.ts`) | `pnpm dev` manual |
-| Commiteados | Sí | No (`.gitignore`) |
-| Fechas | Fijas (Ago-Sep 2026) | Relativas a hoy |
-| Contenido | Minimalista, estático | Realista, cambiante |
+**Nota**: el parser solo lee UID, SUMMARY, DTSTART, DTEND — no procesa
+DESCRIPTION ni otros campos extendidos (los fixtures realistas lo incluyen
+por fidelidad y para cuando se implemente ese parsing).
 
 **URLs locales para agregar en Settings → Calendar sync**:
 
-- `http://localhost:3000/mock/airbnb.ical`
-- `http://localhost:3000/mock/booking.ical`
-
-**Reglas de oro si editás a mano**:
-
-1. Mantené las fechas futuras (el sync descarta `endDate < hoy`).
-2. No uses UIDs `renttool-*` ni `SUMMARY:Blocked (...)` — el sync los filtra.
-3. Los bloqueos de 1 día adyacentes a otros eventos se filtran como buffer
-   reflejado; dejalos multi-día o aislados.
-4. Conservá el UID para actualizar fechas; cambialo solo si querés un evento nuevo.
+- `http://localhost:3000/api/test/ical/airbnb.ics`
+- `http://localhost:3000/api/test/ical/booking.ics`
+- `http://localhost:3000/api/test/ical/airbnb-sample.ics`
 
 ---
 
@@ -483,7 +444,7 @@ Playwright en strict mode falla con "resolved to 2 elements".
 
 Agregados a `globalIgnores`:
 ```
-"e2e/**", "playwright.config.ts", "public/test-fixtures/**"
+"e2e/**", "playwright.config.ts"
 ```
 
 ### 4. `.gitignore` — cobertura existente

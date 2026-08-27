@@ -65,7 +65,7 @@ const PUBLIC_PATHS = [
   "/g", // public guest-form fill-in page at /g/[token]
   "/api/g", // public submit endpoint at /api/g/[token]/submit
   "/api/feedback", // site-wide feedback endpoint — accepts anonymous POSTs, rate-limited by IP-hash at the route layer
-  "/api/test-fixtures", // e2e-only: dynamic iCal fixtures with relative dates (no auth so the server-side sync fetch can read them)
+  "/api/test", // test fixtures (gated by ENABLE_TEST_API in prod; no auth so the server-side sync fetch can read them)
 ];
 
 function clientIpFromRequest(request: NextRequest): string {

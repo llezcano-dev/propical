@@ -31,8 +31,8 @@ import { lookup as dnsLookup } from "node:dns/promises";
  *
  * Development exception: when `allowDevTargets` is true (defaults to
  * `NODE_ENV !== "production"`), loopback targets AND the `http://` scheme
- * are allowed for loopback-only targets, so the dev/e2e mock feeds at
- * `http://localhost:3000/mock/*.ical` keep working.
+ * are allowed for loopback-only targets, so the dev/e2e test feeds at
+ * `http://localhost:3001/api/test/ical/*.ics` keep working.
  *
  * ── Known limitation: DNS rebinding ─────────────────────────────────────
  * This is the "simple" variant (Opción A). There is a TOCTOU race between

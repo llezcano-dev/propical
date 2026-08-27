@@ -83,7 +83,7 @@ test.describe("Calendar — reservations", () => {
       page,
       prop.id,
       "airbnb",
-      `${baseURL}/api/test-fixtures/airbnb-sample`,
+      `${baseURL}/api/test/ical/airbnb-sample.ics`,
     );
     await triggerSync(page, prop.id);
 
@@ -141,7 +141,7 @@ test.describe("Calendar — reservations", () => {
       page,
       prop.id,
       "airbnb",
-      `${baseURL}/api/test-fixtures/airbnb-sample`,
+      `${baseURL}/api/test/ical/airbnb-sample.ics`,
     );
     await triggerSync(page, prop.id);
 

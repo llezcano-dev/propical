@@ -22,7 +22,6 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:seed-test-user": "tsx prisma/seed-test-user.ts",
     "db:migrate-guest-form-pt": "tsx prisma/migrate-guest-form-pt.ts",
-    "mock:ical": "tsx scripts/mock-ical.ts",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",

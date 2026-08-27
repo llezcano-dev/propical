@@ -165,12 +165,12 @@ describe("validateFeedUrl — DNS resolution", () => {
 });
 
 describe("validateFeedUrl — dev exception", () => {
-  it("allows loopback + http:// in dev (mock feeds)", async () => {
-    const r = await validateFeedUrl("http://localhost:3000/mock/airbnb.ical", {
+  it("allows loopback + http:// in dev (test feeds)", async () => {
+    const r = await validateFeedUrl("http://localhost:3001/api/test/ical/airbnb-sample.ics", {
       resolver: resolverFor({ localhost: loopbackV4 }),
       ...DEV,
     });
-    expect(r).toEqual({ ok: true, url: "http://localhost:3000/mock/airbnb.ical" });
+    expect(r).toEqual({ ok: true, url: "http://localhost:3001/api/test/ical/airbnb-sample.ics" });
   });
 
   it("still blocks non-loopback http:// in dev", async () => {

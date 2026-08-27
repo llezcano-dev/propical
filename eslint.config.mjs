@@ -19,8 +19,6 @@ const eslintConfig = defineConfig([
     // E2E tests — linted by @playwright/test's own config
     "e2e/**",
     "playwright.config.ts",
-    // Test fixtures
-    "public/test-fixtures/**",
   ]),
   // Hardcode React version so eslint-plugin-react doesn't try to detect it
   // via context.getFilename(), which crashes on ESLint 10 flat config.

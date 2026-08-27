@@ -22,7 +22,7 @@ const RUN_TS = Date.now();
 const PROP_PREFIX = `B7-${RUN_TS}-`;
 // Dynamic fixture feed (relative dates) so the scoped sync after save
 // succeeds quickly and the card flips to "Connected" without a feed error.
-const FEED_URL = `${E2E_BASE_URL}/api/test-fixtures/airbnb-sample`;
+const FEED_URL = `${E2E_BASE_URL}/api/test/ical/airbnb-sample.ics`;
 
 test.describe("Calendar link save — vrbo + custom platforms persist (B7)", () => {
   test("saving a Vrbo preset link persists the card (was 400 + silent)", async ({
