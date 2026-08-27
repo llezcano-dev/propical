@@ -28,7 +28,17 @@ type FixtureEvent = {
 // Fixed anchor for realistic fixtures. Events sit on `EPOCH + i * SPACING`
 // so their dates are stable across regenerations (only the window moves).
 const EPOCH = "2026-01-01";
-const SPACING_DAYS = 5;
+// One slot every 9 days leaves unbooked nights between reservations, so the
+// feed reads as a normal host calendar rather than a wall of double-bookings.
+const SPACING_DAYS = 9;
+// Booking rides in the gap after each Airbnb slot (Airbnb ends at most +4).
+const BOOKING_OFFSET_DAYS = 4;
+// Deliberate conflict rate: every 20th booking slot (5%) overlaps the Airbnb
+// event at the same index. Low so most reservations are clean, but conflict
+// detection still gets occasional real cases. Remainder 3 means i%5===3, which
+// is never an Airbnb block index, so conflicts are always reservation-on-reservation.
+const CONFLICT_EVERY = 20;
+const CONFLICT_AT = 3;
 
 // ---------------------------------------------------------------------------
 // Date helpers (calendar days, noon-UTC to dodge DST)
@@ -155,10 +165,10 @@ export function buildAirbnbIcal(fromISO: string, toISO: string): string {
     const start = addDaysISO(EPOCH, i * SPACING_DAYS);
     if (start > toISO) break;
 
-    if (i % 4 === 3) {
+    if (i % 5 === 4) {
       // Multi-day "Not available" block (kept multi-day so the sync's
       // reflected-buffer filter doesn't drop it).
-      const end = addDaysISO(start, 3);
+      const end = addDaysISO(start, 2);
       if (end < fromISO) continue;
       events.push({
         uid: `mock-airbnb-${i}@fixture`,
@@ -167,7 +177,7 @@ export function buildAirbnbIcal(fromISO: string, toISO: string): string {
         endDate: end,
       });
     } else {
-      const end = addDaysISO(start, 2 + (i % 5)); // 2..6 nights
+      const end = addDaysISO(start, 2 + (i % 3)); // 2..4 nights
       if (end < fromISO) continue;
       events.push({
         uid: `mock-airbnb-${i}@fixture`,
@@ -187,13 +197,26 @@ export function buildAirbnbIcal(fromISO: string, toISO: string): string {
 }
 
 function bookingEventAt(i: number) {
-  const m = i % 5;
   const baseDay = i * SPACING_DAYS;
 
+  // Deliberate low-probability conflict (5%): a booking reservation on the
+  // same day as the Airbnb event at this index. Checked first so it overrides
+  // the block pattern.
+  if (i % CONFLICT_EVERY === CONFLICT_AT) {
+    const start = addDaysISO(EPOCH, baseDay);
+    return {
+      start,
+      duration: 3,
+      summary: "Reserved",
+      uid: `mock-booking-${i}@fixture`,
+    };
+  }
+
+  const m = i % 5;
   if (m === 4) {
     // Manual 1-day block, isolated (next booking is 5+ days away) so the
     // reflected-buffer filter keeps it.
-    const start = addDaysISO(EPOCH, baseDay + 2);
+    const start = addDaysISO(EPOCH, baseDay + BOOKING_OFFSET_DAYS);
     return {
       start,
       duration: 1,
@@ -202,21 +225,20 @@ function bookingEventAt(i: number) {
     };
   }
   if (m === 3) {
-    const start = addDaysISO(EPOCH, baseDay + 2);
+    const start = addDaysISO(EPOCH, baseDay + BOOKING_OFFSET_DAYS);
     return {
       start,
-      duration: 3,
+      duration: 2,
       summary: "CLOSED - Not available",
       uid: `mock-booking-${i}@fixture`,
     };
   }
 
-  // Reserved. Every 4th index starts on the SAME day as the Airbnb event at
-  // that index (deliberate, occasional conflict for testing).
-  const start = addDaysISO(EPOCH, i % 4 === 1 ? baseDay : baseDay + 2);
+  // Reserved in the gap after the Airbnb slot at this index.
+  const start = addDaysISO(EPOCH, baseDay + BOOKING_OFFSET_DAYS);
   return {
     start,
-    duration: 2 + (i % 4), // 2..5 nights
+    duration: 2 + (i % 3), // 2..4 nights
     summary: "Reserved",
     uid: `mock-booking-${i}@fixture`,
   };
