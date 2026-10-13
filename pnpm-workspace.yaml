@@ -1,2 +1,9 @@
+allowBuilds:
+  '@prisma/engines': true
+  '@sentry/cli': true
+  esbuild: true
+  prisma: true
+  sharp: true
+  unrs-resolver: true
 patchedDependencies:
   eslint-plugin-react: patches/eslint-plugin-react.patch
