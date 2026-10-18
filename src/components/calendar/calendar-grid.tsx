@@ -1,10 +1,13 @@
 "use client";
 
-import { useMemo } from "react";
 import { useI18n } from "@/lib/i18n/context";
 import { resolvePlatformMeta } from "@/lib/platform-meta";
-import { timeToPercent } from "./utils";
+import { useMemo } from "react";
 import type { BarSegment, CalendarBar } from "./types";
+function timeToPercent(timeStr: string): number {
+  const [h, m] = timeStr.split(":").map(Number);
+  return ((h * 60 + (m || 0)) / 1440) * 100;
+}
 
 /** Relative luminance of a #RRGGBB colour — light brands (Expedia yellow)
  *  need dark ink on the bar; dark brands use white. */

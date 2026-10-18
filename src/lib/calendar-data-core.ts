@@ -6,10 +6,10 @@
  * testable in unit tests without React or a DOM.
  */
 
-import type { Property, CalendarLink, Reservation } from "@/lib/types";
+import type { CalendarBar, CalendarEvent, ConflictInfo } from "@/components/calendar/types";
+import { addDaysStr, toUtcDateStr } from "@/lib/dates";
+import type { CalendarLink, Property, Reservation } from "@/lib/types";
 import { bookingWindowCutoff } from "@/lib/types";
-import { toUtcDateStr, addDaysStr } from "@/components/calendar/utils";
-import type { CalendarEvent, CalendarBar, ConflictInfo } from "@/components/calendar/types";
 
 export interface CalendarDataCore {
   airbnbDates: Set<string>;

@@ -1,9 +1,9 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { toUtcDateStr, toLocalDateStr, localMidnightFromDateStr, reservationDateKey } from "./utils";
-import { getExtendableBookings } from "./extendable-bookings";
-import { buildCalendarExportText, type ExportInput } from "./calendar-export";
-import type { CalendarEvent } from "./types";
+import { localMidnightFromDateStr, reservationDateKey, toLocalDateStr, toUtcDateStr } from "@/lib/dates";
 import type { Property, Reservation } from "@/lib/types";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { buildCalendarExportText, type ExportInput } from "./calendar-export";
+import { getExtendableBookings } from "./extendable-bookings";
+import type { CalendarEvent } from "./types";
 
 /**
  * Timezone-invariance matrix (B1 family).

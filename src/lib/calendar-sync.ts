@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { parseICal, type ICalEvent } from "@/lib/ical";
 import { fetchPublicFeedUrl } from "@/lib/feed-url-guard";
 import { syncLogMessage } from "@/lib/sync-log-messages";
-import { todayLocalISO } from "@/lib/dates";
+import { todayLocalDateStr } from "@/lib/dates";
 
 /**
  * Fetch and parse an iCal feed from a URL.
@@ -124,10 +124,10 @@ export async function syncAllCalendars(opts?: {
 
         // Filter to future events only, and skip events created by our own RentTool feed
         // (prevents feedback loop: our buffer → imported by platform → re-synced as booking)
-        // todayLocalISO() — fecha local, no UTC. toISOString() acá descartaría
+        // todayLocalDateStr() — fecha local, no UTC. toISOString() acá descartaría
         // eventos que terminan "hoy" en hora local pero ya son "ayer" en UTC
         // (zonas al oeste de UTC), rompiendo los sync del mismo día.
-        const today = todayLocalISO();
+        const today = todayLocalDateStr();
 
         // Skip events created by our own RentTool feed (feedback loop prevention)
         const filteredEvents = events.filter((e) => {
@@ -233,7 +233,7 @@ export async function syncAllCalendars(opts?: {
           // Fecha local (no UTC): el filtro endDate compara contra fechas
           // de calendario locales. toISOString() acá se desplaza un día en
           // zonas al este/oeste de UTC.
-          const todayIso = todayLocalISO();
+          const todayIso = todayLocalDateStr();
           for (const ev of removedEvents) {
             const deleted = await prisma.calendarEvent.deleteMany({
               where: {

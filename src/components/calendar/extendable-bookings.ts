@@ -1,6 +1,6 @@
-import type { Property } from "@/lib/types";
 import type { ExtendableBooking } from "@/components/date-actions-popover";
-import { toUtcDateStr, addDaysStr } from "./utils";
+import { addDaysStr, toUtcDateStr } from "@/lib/dates";
+import type { Property } from "@/lib/types";
 import type { CalendarEvent } from "./types";
 
 /** Find events / reservations the current selection (a contiguous

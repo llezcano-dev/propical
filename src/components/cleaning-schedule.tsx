@@ -1,15 +1,15 @@
 "use client";
 
-import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
-import Link from "next/link";
 import { EmptyState } from "@/components/empty-state";
-import { useI18n } from "@/lib/i18n/context";
-import { cn } from "@/lib/utils";
 import { eyebrowVariants } from "@/components/ui/atoms/eyebrow";
+import { addDaysStr, toUtcDateStr } from "@/lib/dates";
+import { useI18n } from "@/lib/i18n/context";
 import type { Locale } from "@/lib/i18n/translations";
-import type { Property, CalendarLink, DateOverride } from "@/lib/types";
+import type { CalendarLink, DateOverride, Property } from "@/lib/types";
 import { bookingWindowCutoff } from "@/lib/types";
-import { toUtcDateStr } from "@/components/calendar/utils";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { forwardRef, Fragment, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 
 interface CopyShape {
   dateLocale: string;
@@ -163,12 +163,6 @@ interface CleaningScheduleProps {
    *  events / links / overrides fetches are still in flight, so
    *  the page doesn't grow as data lands. */
   loading?: boolean;
-}
-
-function addDaysStr(dateStr: string, days: number): string {
-  const d = new Date(dateStr + "T12:00:00Z");
-  d.setUTCDate(d.getUTCDate() + days);
-  return d.toISOString().substring(0, 10);
 }
 
 /** Local-calendar-date of the current wall-clock day. Local read is
@@ -1163,7 +1157,7 @@ export const CleaningSchedule = forwardRef<CleaningScheduleHandle, CleaningSched
                   const thisYear = day.date.substring(0, 4);
                   const showYearDivider = thisYear !== prevYear;
                   return (
-                    <>{showYearDivider && (
+                    <Fragment key={`${day.date}-${day.propertyId}-${i}`}>{showYearDivider && (
                       <tr key={`year-${thisYear}`} className="border-b border-border">
                         <td colSpan={10} className="px-4 py-2 text-sm font-semibold text-text-muted bg-surface-hover">{thisYear}</td>
                       </tr>
@@ -1218,7 +1212,7 @@ export const CleaningSchedule = forwardRef<CleaningScheduleHandle, CleaningSched
                         </div>
                       </td>
                     </tr>
-                    </>
+                    </Fragment>
                   );
                 })}
               </tbody>

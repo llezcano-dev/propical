@@ -1,20 +1,21 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import type { Property } from "@/lib/types";
-import type { ExtendableBooking } from "@/components/date-actions-popover";
-import { CalendarGrid } from "@/components/calendar/calendar-grid";
-import { CalendarDatePopover } from "@/components/calendar/calendar-date-popover";
 import { BarClaimPopover, type ClaimableBar } from "@/components/calendar/bar-claim-popover";
+import { CalendarDatePopover } from "@/components/calendar/calendar-date-popover";
+import { CalendarGrid } from "@/components/calendar/calendar-grid";
 import { ConflictBanner } from "@/components/calendar/conflict-banner";
-import { useCalendarFetch, SYNC_COOLDOWN_MS } from "@/components/calendar/use-calendar-fetch";
 import { useCalendarData } from "@/components/calendar/use-calendar-data";
-import { addDaysStr, capitalizeFirst } from "@/components/calendar/utils";
+import { SYNC_COOLDOWN_MS, useCalendarFetch } from "@/components/calendar/use-calendar-fetch";
+import type { ExtendableBooking } from "@/components/date-actions-popover";
 import { EmptyState } from "@/components/empty-state";
-import { useI18n } from "@/lib/i18n/context";
-import { cn } from "@/lib/utils";
 import { eyebrowVariants } from "@/components/ui/atoms/eyebrow";
+import { addDaysStr } from "@/lib/dates";
+import { useI18n } from "@/lib/i18n/context";
 import type { Locale } from "@/lib/i18n/translations";
+import { capitalizeFirst } from "@/lib/strings";
+import type { Property } from "@/lib/types";
+import { cn } from "@/lib/utils";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 interface CopyShape {
   weekdays: string[];

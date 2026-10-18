@@ -1,16 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useState, useRef } from "react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { GuestCards } from "@/components/guest-cards";
-import { useI18n } from "@/lib/i18n/context";
-import { resolvePlatformMeta } from "@/lib/platform-meta";
 import { Eyebrow } from "@/components/ui/atoms/eyebrow";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { toUtcDateStr } from "@/lib/dates";
+import { useI18n } from "@/lib/i18n/context";
 import type { Locale } from "@/lib/i18n/translations";
+import { resolvePlatformMeta } from "@/lib/platform-meta";
 import type { Guest, Reservation } from "@/lib/types";
-import { toUtcDateStr } from "@/components/calendar/utils";
+import Link from "next/link";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 // Pre-arrival discovery hint — localized in all 5 supported locales.
 // The rest of this component is still English-only; see GitHub issue

@@ -1,9 +1,9 @@
 "use client";
 
-import type { Property } from "@/lib/types";
 import { DateActionsPopover, type DateBarInfo, type ExtendableBooking } from "@/components/date-actions-popover";
+import { addDaysStr } from "@/lib/dates";
+import type { Property } from "@/lib/types";
 import { getExtendableBookings } from "./extendable-bookings";
-import { addDaysStr } from "./utils";
 import type { CalendarBar, CalendarEvent } from "./types";
 
 interface CalendarDatePopoverProps {
